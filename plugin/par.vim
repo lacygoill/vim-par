@@ -5,8 +5,8 @@
 "                                              │  because `:nno` doesn't translate `<plug>`.
 "                                              │
 nno  <silent>  <space>P  mz:<c-u>exe "sil norm \<plug>(my_gq)ip"
-                         \<bar> sil update
-                         \<bar> sil! norm! `z<cr>
+                         \ <bar> sil update
+                         \ <bar> sil! norm! `z<cr>
 
 
 
