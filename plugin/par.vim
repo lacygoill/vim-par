@@ -1,3 +1,8 @@
+if exists('g:loaded_par')
+    finish
+endif
+let g:loaded_par = 1
+
 "                                              ┌─ don't write:
 "                                              │
 "                                              │      'sil norm <plug>(my_gq)ip'
