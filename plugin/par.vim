@@ -3,6 +3,10 @@ if exists('g:loaded_par')
 endif
 let g:loaded_par = 1
 
+" FIXME:
+" When we press `SPC p` on a  commented paragraph, the lines after the first one
+" are not commented anymore.
+
 "                                              ┌─ don't write:
 "                                              │
 "                                              │      'sil norm <plug>(my_gq)ip'
