@@ -42,9 +42,9 @@ fu! par#gq(type) abort "{{{1
         " 'ai' needs to be set so that `gw` can properly indent the formatted lines.
         setl ai
 
-        let [ lnum1, lnum2 ] = a:type is# 'vis'
-                           \ ?     [ line("'<"), line("'>") ]
-                           \ :     [ line("'["), line("']") ]
+        let [lnum1, lnum2] = a:type is# 'vis'
+                         \ ?     [line("'<"), line("'>")]
+                         \ :     [line("'["), line("']")]
 
         let cml = get(split(&l:cms, '%s'), 0, '')
         let cml = '\%(\V'.escape(cml, '\').'\m\)\?'
@@ -83,12 +83,15 @@ fu! par#gq(type) abort "{{{1
         return lg#catch_error()
     finally
         let &l:ai = ai_save
+        " Why?{{{
+        "
         " For some reason, if we're editing a help file, and use `gq`, Vim makes
         " the buffer noreadonly back.
         " MWE:
         "     :h
         "     coH
         "     :norm! gqq
+        "}}}
         if &ft is# 'help' && &l:ro
             setl noro
         endif
@@ -125,17 +128,15 @@ fu! par#split_paragraph(compact, mode) abort "{{{1
     \ ?     [line("'{"), line("'}")]
     \ :     [line("'<"), line("'>")]
 
-    " get the address of the last line of the paragraph/selection
-    if a:mode is# 'n' && getline(lastline) =~# '^\s*$'
-        let lnum2 = lastline - 1
-    else
-        let lnum2 = lastline
-    endif
-
     " get the address of the first line
     let lnum1 = firstline ==# 1 && getline(1) =~# '\S'
     \ ?             1
     \ :             firstline + 1
+
+    " get the address of the last line of the paragraph/selection
+    let lnum2 = a:mode is# 'n' && getline(lastline) =~# '^\s*$'
+    \ ?             lastline - 1
+    \ :             lastline
 
     if getline(lnum1) =~# &l:flp && a:mode is# 'n'
         return feedkeys("\<plug>(my_gq)ip", 'i')
@@ -208,7 +209,6 @@ fu! par#split_paragraph(compact, mode) abort "{{{1
         endif
 
         sil update
-
         call setpos('.', pos)
 
         " make the mapping repeatable
