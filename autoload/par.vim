@@ -152,31 +152,7 @@ fu! par#split_paragraph(compact, mode) abort "{{{1
     endif
 
     try
-        " Replace soft hyphens which we sometimes copy from a pdf.
-        " They are annoying because they mess up the display of nearby characters.
-        sil exe 'keepj keepp '.lnum1.','.lnum2.'s/\%u00ad/-/ge'
-
-        " In a markdown file, we could have a leading `>` in front of quoted lines.
-        " The next `:j` won't remove them. We need to do it manually, and keep only
-        " the first one.
-        sil exe 'keepj '.(lnum1+(lnum1 < lnum2 ? 1 : 0)).','.lnum2.'s/^>//e'
-
-        " Replace every hyphen used at the end of  a line to break a word on two
-        " lines, with a ‘C-a’.
-        " Why?{{{
-        "
-        " Because we don't want them. So, we mark them now, to remove them later.
-        "}}}
-        " Ok, but why don't you remove them right now?{{{
-        "
-        " Because it could alter the range (more specifically, it could reduce `lnum2`).
-        " This would cause the next `:j` to join too many lines.
-        "}}}
-        sil exe 'keepj keepp '.lnum1.','.lnum2.'s/[\u2010-]\ze\n\s*\S\+/'."\<c-a>".'/ge'
-        " join all the lines in a single one
-        sil exe 'keepj '.lnum1.','.lnum2.'j'
-        " Now that we've joined all the lines, remove every ‘C-a’.
-        sil exe "keepj keepp s/\<c-a>\\s*//ge"
+        call s:foobar(lnum1, lnum2)
 
         " break the line down according to the punctuation
         let pat = '\C[.!?]\zs\%(\s\+[.a-z]\@!\|$\)\|:\zs\s*$'
@@ -218,5 +194,35 @@ fu! par#split_paragraph(compact, mode) abort "{{{1
     catch
         return lg#catch_error()
     endtry
+endfu
+
+fu! s:foobar(lnum1, lnum2) abort "{{{1
+    let [lnum1, lnum2] = [a:lnum1, a:lnum2]
+
+    " Replace soft hyphens which we sometimes copy from a pdf.
+    " They are annoying because they mess up the display of nearby characters.
+    sil exe 'keepj keepp '.lnum1.','.lnum2.'s/\%u00ad/-/ge'
+
+    " In a markdown file, we could have a leading `>` in front of quoted lines.
+    " The next `:j` won't remove them. We need to do it manually, and keep only
+    " the first one.
+    sil exe 'keepj '.(lnum1+(lnum1 < lnum2 ? 1 : 0)).','.lnum2.'s/^>//e'
+
+    " Replace every hyphen used at the end of  a line to break a word on two
+    " lines, with a ‘C-a’.
+    " Why?{{{
+    "
+    " Because we don't want them. So, we mark them now, to remove them later.
+    "}}}
+    " Ok, but why don't you remove them right now?{{{
+    "
+    " Because it could alter the range (more specifically, it could reduce `lnum2`).
+    " This would cause the next `:j` to join too many lines.
+    "}}}
+    sil exe 'keepj keepp '.lnum1.','.lnum2.'s/[\u2010-]\ze\n\s*\S\+/'."\<c-a>".'/ge'
+    " join all the lines in a single one
+    sil exe 'keepj '.lnum1.','.lnum2.'j'
+    " Now that we've joined all the lines, remove every ‘C-a’.
+    sil exe "keepj keepp s/\<c-a>\\s*//ge"
 endfu
 
