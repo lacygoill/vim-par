@@ -92,15 +92,16 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
 
         " format each non-empty line with our custom `gq`
         sil exe printf('keepj keepp %d,%dg/\S/norm gq_', lnum1, line('.'))
-
-        " remove empty lines
-        if !a:0
-            sil exe printf('keepj keepp %d,%dg/^$/d_', lnum1, line('.'))
-        endif
+        let lnum2 = line("']")
 
         " If the text was commented, make sure it's still commented.
         if was_commented
-            call s:make_sure_properly_commented(lnum1, line('.'))
+            call s:make_sure_properly_commented(lnum1, lnum2)
+        endif
+
+        " remove empty lines
+        if !a:0
+            sil exe printf('keepj keepp %d,%dg/^$/d_', lnum1, lnum2)
         endif
 
         sil update
