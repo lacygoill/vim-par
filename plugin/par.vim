@@ -7,18 +7,6 @@ let g:loaded_par = 1
 " I'm not sure our mappings handle diagrams that well.
 " In particular when there're several diagram characters on a single line.
 
-" FIXME: Sometimes, a superfluous space is added.
-" MWE: Press `gqq` on the following line.
-
-" I'm not sure our mappings handle diagrams that well. In particular when there're several diagram characters on a single line.
-
-" →
-
-" superfluous space
-" v
-"  I'm not  sure  our mappings  handle diagrams  that  well. In particular  when
-" there're several diagram characters on a single line.
-
 " TODO:
 " I'm not sure our mappings handle comments with 2 parts (html, c) that well.
 " MWE:

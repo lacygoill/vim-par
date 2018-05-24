@@ -39,7 +39,7 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
     try
         let [lnum1, lnum2] = s:get_range('split-paragraph', a:mode)
 
-        if s:has_to_format_a_list(lnum1, mode)
+        if s:has_to_format_a_list(lnum1, a:mode)
             sil exe 'norm! '.lnum1.'Ggw'.lnum2.'G'
             return
         endif
@@ -100,7 +100,6 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
     catch
         return lg#catch_error()
     finally
-        sil! update
         call setpos('.', pos)
     endtry
 endfu
@@ -140,6 +139,27 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
     " has been split into several lines.
     if was_commented
         call s:make_sure_properly_commented(lnum1, lnum2)
+    endif
+
+    " Why?{{{
+    "
+    " Sometimes, a superfluous space is added.
+    " MWE: Press `gqq` on the following line.
+
+    " I'm not sure our mappings handle diagrams that well. In particular when there're several diagram characters on a single line.
+
+    " →
+
+    " superfluous space
+    " v
+    "  I'm not  sure  our mappings  handle diagrams  that  well. In particular  when
+    " there're several diagram characters on a single line.
+    "}}}
+    let line = getline(lnum1)
+    let pat = '^\s*'.s:get_cml().'\s\zs\s'
+    if line =~# pat
+        call setline(lnum1, substitute(line, pat, '', ''))
+        sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
     endif
 endfu
 
