@@ -4,8 +4,8 @@ endif
 let g:loaded_par = 1
 
 " FIXME:
-" When we press `SPC p` on a  commented paragraph, the lines after the first one
-" are not commented anymore.
+" When we press `SPC p` on a commented paragraph, sometimes, the lines after the
+" first one are not commented anymore.
 
 " TODO:
 " Make `SPC p` smarter.

@@ -74,8 +74,8 @@ fu! par#gqq() abort "{{{2
     norm! mz
 
     let was_commented = !empty(&l:cms)
-    \                   ?    stridx(getline('.'), split(&l:cms, '%s')[0]) !=# -1
-    \                   :    0
+                      \ ?    stridx(getline('.'), split(&l:cms, '%s')[0]) !=# -1
+                      \ :    0
     let orig = line('.')
 
     " format current line
