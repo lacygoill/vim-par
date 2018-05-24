@@ -302,12 +302,11 @@ fu! s:has_to_format_a_list(lnum1, mode) abort "{{{2
 endfu
 
 fu! s:is_commented(...) abort "{{{2
-    if empty(&l:cms)
+    if &l:cms is# ''
         return 0
     else
         let line = getline(a:0 ? a:1 : line('.'))
-        let cml = split(&l:cms, '%s')[0]
-        return line =~# '^\s*\V'.escape(cml, '\')
+        return line =~# '^\s*'.s:get_cml('without_quantifier')
     endif
 endfu
 
