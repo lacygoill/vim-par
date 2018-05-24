@@ -212,9 +212,9 @@ fu! s:is_commented(...) abort "{{{2
     if empty(&l:cms)
         return 0
     else
-    let line = getline(a:0 ? a:1 : line('.'))
-    let cml = split(&l:cms, '%s')[0]
-    return line =~# '^\s*\V'.escape(cml, '\')
+        let line = getline(a:0 ? a:1 : line('.'))
+        let cml = split(&l:cms, '%s')[0]
+        return line =~# '^\s*\V'.escape(cml, '\')
     endif
 endfu
 
