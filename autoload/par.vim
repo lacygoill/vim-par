@@ -47,12 +47,15 @@ fu! par#gq(type) abort "{{{2
 
             " format the text-object
             sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
+            let lnum2 = line("']")
 
-            " `s:prepare()` may have left some ‘C-a’s.
-            sil exe lnum1.','.line("']").'s/\%x01\s*//ge'
+            " `s:prepare()` may have left some ‘C-a’s
+            sil exe lnum1.','.lnum2.'s/\%x01\s*//ge'
 
-            " re-format the text-object
-            sil exe 'norm! '.lnum1.'Ggq'.line("']").'G'
+            " Since we may have altered the  text after removing some ‘C-a’s, we
+            " need to re-format  the text-object, to be sure that  `gq` has done
+            " its job correctly, and is omnipotent.
+            sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
         endif
     catch
         return lg#catch_error()
