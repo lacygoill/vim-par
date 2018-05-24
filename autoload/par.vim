@@ -120,10 +120,6 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
     " `s:remove_hyphens()` may have left some ‘C-a’s
     sil exe lnum1.','.lnum2.'s/\%x01\s*//ge'
 
-    " restore diagram characters
-    sil exe printf('keepj keepp %d,%ds/│ \([\x01\x02\x03\x04]\)/\=%s[submatch(1)]/e', lnum1, lnum2,
-    \ {"\x02": '┌', "\x03": '┐', "\x04": '└', "\x05": '┘'})
-
     " Why?{{{
     "
     " Since we may have altered the  text after removing some ‘C-a’s, we
@@ -138,6 +134,10 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
     " It's easier to remove them AFTER `gq`, and re-format a second time.
     "}}}
     sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
+
+    " restore diagram characters
+    sil exe printf('keepj keepp %d,%ds/│ \([\x02\x03\x04\x05]\)/\=%s[submatch(1)]/e', lnum1, lnum2,
+    \ {"\x02": '┌', "\x03": '┐', "\x04": '└', "\x05": '┘'})
 
     " If the text was commented, make sure it's still commented.
     " Necessary if  we've pressed `gqq`  on a long commented  line which
