@@ -13,6 +13,10 @@ fu! par#gq(type) abort "{{{2
 
         if s:has_to_format_a_list(lnum1)
             call s:format_list(lnum1, lnum2)
+
+        elseif getline(lnum1) =~# '^\s*'.cml.'\s*[│┌]'
+            call s:gq_in_diagram(lnum1, lnum2)
+
         else
             call s:gq(lnum1, lnum2)
         endif
@@ -100,21 +104,11 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
     let [lnum1, lnum2] = [a:lnum1, a:lnum2]
     let was_commented = s:is_commented()
 
-    " temporarily replace diagram characters with control characters
-    sil exe printf('keepj keepp %d,%ds/[┌┐└┘]/\="│ ".%s[submatch(0)]/e', lnum1, lnum2,
-    \ {'┌': "\x02", '┐': "\x03", '└': "\x04", '┘': "\x05"})
-
     " remove undesired hyphens
     call s:remove_hyphens(lnum1, lnum2, 'gq')
 
     " format the text-object
     sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
-    " Why?{{{
-    "
-    " `gq` could have increased the number of lines, or reduced it.
-    " There's no  guarantee that  `lnum2` still matches  the end  of the
-    " original text.
-    "}}}
     let lnum2 = line("']")
 
     " `s:remove_hyphens()` may have left some ‘C-a’s
@@ -134,10 +128,6 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
     " It's easier to remove them AFTER `gq`, and re-format a second time.
     "}}}
     sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
-
-    " restore diagram characters
-    sil exe printf('keepj keepp %d,%ds/│ \([\x02\x03\x04\x05]\)/\=%s[submatch(1)]/e', lnum1, lnum2,
-    \ {"\x02": '┌', "\x03": '┐', "\x04": '└', "\x05": '┘'})
 
     " If the text was commented, make sure it's still commented.
     " Necessary if  we've pressed `gqq`  on a long commented  line which
@@ -166,6 +156,28 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
         call setline(lnum1, substitute(line, pat, '', ''))
         sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
     endif
+endfu
+
+fu! s:gq_in_diagram(lnum1, lnum2) abort "{{{2
+    let [lnum1, lnum2] = [a:lnum1, a:lnum2]
+
+    " temporarily replace diagram characters with control characters
+    sil exe printf('keepj keepp %d,%ds/[┌┐└┘]/\="│ ".%s[submatch(0)]/e', lnum1, lnum2,
+    \ {'┌': "\x01", '┐': "\x02", '└': "\x03", '┘': "\x04"})
+
+    " format the lines
+    sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
+
+    " Why?{{{
+    "
+    " `gq` could have increased the number of lines, or reduced it.
+    " There's no  guarantee that  `lnum2` still matches  the end  of the
+    " original text.
+    "}}}
+    let lnum2 = line("']")
+    " restore diagram characters
+    sil exe printf('keepj keepp %d,%ds/│ \([\x01\x02\x03\x04]\)/\=%s[submatch(1)]/e', lnum1, lnum2,
+    \ {"\x01": '┌', "\x02": '┐', "\x03": '└', "\x04": '┘'})
 endfu
 
 fu! s:format_list(lnum1, lnum2) abort "{{{2
