@@ -6,6 +6,14 @@ let g:loaded_par = 1
 " FIXME:
 " When we press `SPC p` on a commented paragraph, sometimes, the lines after the
 " first one are not commented anymore.
+" MWE:
+
+"     The quick brown fox jumps over the lazy dog.
+"     The quick brown fox jumps over the lazy dog.
+
+" TODO:
+" I'm not sure our mappings handle diagrams that well.
+" In particular when there're several diagram characters on a single line.
 
 " TODO:
 " Make `SPC p` smarter.
@@ -17,10 +25,6 @@ let g:loaded_par = 1
 "     • ignore the code above/below
 "
 "     • handle correctly diagrams
-
-" TODO:
-" I'm not sure our mappings handle diagrams that well.
-" In particular when there're several diagram characters on a single line.
 
 " Mappings {{{1
 " SPC p {{{2
