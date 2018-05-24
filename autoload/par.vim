@@ -73,11 +73,7 @@ fu! par#gq(type) abort "{{{2
             " Necessary if  we've pressed `gqq`  on a long commented  line which
             " has been split into several lines.
             if was_commented
-                for i in range(lnum1, lnum2)
-                    if !s:is_commented(i)
-                        sil exe 'keepj keepp '.i.'CommentToggle'
-                    endif
-                endfor
+                call s:make_sure_properly_commented(lnum1, lnum2)
             endif
         endif
     catch
@@ -158,11 +154,7 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
 
         " If the text was commented, make sure it's still commented.
         if was_commented
-            for i in range(lnum1, line('.'))
-                if !s:is_commented(i)
-                    sil exe 'keepj keepp '.i.'CommentToggle'
-                endif
-            endfor
+            call s:make_sure_properly_commented(lnum1, line('.'))
         endif
 
         sil update
@@ -211,6 +203,14 @@ fu! s:is_commented(...) abort "{{{2
         let cml = split(&l:cms, '%s')[0]
         return line =~# '^\s*\V'.escape(cml, '\')
     endif
+endfu
+
+fu! s:make_sure_properly_commented(lnum1, lnum2) abort "{{{2
+    for i in range(a:lnum1, a:lnum2)
+        if !s:is_commented(i)
+            sil exe 'keepj keepp '.i.'CommentToggle'
+        endif
+    endfor
 endfu
 
 fu! s:prepare(lnum1, lnum2, cmd) abort "{{{2
