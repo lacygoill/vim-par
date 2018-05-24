@@ -49,7 +49,10 @@ fu! par#gq(type) abort "{{{2
             sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
 
             " `s:prepare()` may have left some ‘C-a’s.
-            sil exe lnum1.','.lnum2.'s/\%x01\s*//ge'
+            sil exe lnum1.','.line("']").'s/\%x01\s*//ge'
+
+            " re-format the text-object
+            sil exe 'norm! '.lnum1.'Ggq'.line("']").'G'
         endif
     catch
         return lg#catch_error()

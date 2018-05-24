@@ -22,9 +22,6 @@ let g:loaded_par = 1
 " I'm not sure our mappings handle diagrams that well.
 " In particular when there're several diagram characters on a single line.
 
-" TODO:
-" Why is `SPC P` not omnipotent?
-
 " Mappings {{{1
 " SPC p {{{2
 
