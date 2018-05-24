@@ -16,7 +16,7 @@ fu! par#gq(type) abort "{{{2
 
         " If 'fp' doesn't invoke `$ par`, but something else like `$ js-beautify`,
         " we should let the external program do its job without interfering.
-        if &l:fp !~# '^par\s'
+        if s:get_fp() !~# '^par\s'
             sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
 
         elseif has_a_list_header
@@ -42,6 +42,8 @@ fu! par#gq(type) abort "{{{2
             \ {"\x01": '┌', "\x02": '┐', "\x03": '└', "\x04": '┘'})
 
         else
+            let was_commented = s:is_commented()
+
             " remove undesired hyphens
             call s:prepare(lnum1, lnum2, 'gq')
 
@@ -66,6 +68,17 @@ fu! par#gq(type) abort "{{{2
             " It's easier to remove them AFTER `gq`, and re-format a second time.
             "}}}
             sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
+
+            " If the text was commented, make sure it's still commented.
+            " Necessary if  we've pressed `gqq`  on a long commented  line which
+            " has been split into several lines.
+            if was_commented
+                for i in range(lnum1, lnum2)
+                    if !s:is_commented(i)
+                        sil exe 'keepj keepp '.i.'CommentToggle'
+                    endif
+                endfor
+            endif
         endif
     catch
         return lg#catch_error()
@@ -86,37 +99,13 @@ fu! par#gq(type) abort "{{{2
     endtry
 endfu
 
-fu! par#gqq() abort "{{{2
-    let cnt = v:count1
-    let pos = getcurpos()
-
-    let was_commented = s:is_commented()
-    let orig = line('.')
-
-    " format `cnt` lines
-    exe "sil norm \<plug>(par#gq)".cnt.'_'
-
-    " if the line was commented, and has been split into several new lines (i.e.
-    " the current line address has changed)
-    if was_commented && line('.') !=# orig
-        let range = orig+1.','.line('.')
-        " then comment the lines between the new lines
-        exe range.'CommentToggle'
-        " and format them
-        exe "sil norm \<plug>(par#gq)".(line('.')-orig).'k'
-    endif
-
-    call setpos('.', pos)
-    sil! call repeat#set("\<plug>(par#gqq)", cnt)
-endfu
-
 fu! par#split_paragraph(mode, ...) abort "{{{2
     let [lnum1, lnum2] = s:get_range(a:mode)
 
     " Format sth like this:
     "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
     "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
-    if getline(lnum1) =~# &l:flp && &l:fp =~# '^par\s' && a:mode is# 'n'
+    if getline(lnum1) =~# &l:flp && s:get_fp() =~# '^par\s' && a:mode is# 'n'
         sil exe 'norm! '.lnum1.'Ggw'.lnum2.'G'
         return
     endif
@@ -159,8 +148,8 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
         "}}}
         sil keepj keepp -,g/^\s*$/d_
 
-        " format each non-empty line with `par#gqq()`
-        sil exe printf('keepj keepp %d,%dg/\S/sil call par#gqq()', lnum1, line('.'))
+        " format each non-empty line with our custom `gq`
+        sil exe printf('keepj keepp %d,%dg/\S/norm gq_', lnum1, line('.'))
 
         " remove empty lines
         if !a:0
@@ -190,6 +179,12 @@ endfu
 
 " {{{1
 " Util {{{1
+fu! s:get_fp() abort "{{{2
+    return &l:fp is# ''
+    \ ?        &g:fp
+    \ :        &l:fp
+endfu
+
 fu! s:get_range(mode) abort "{{{2
     let [firstline, lastline] = a:mode is# 'n'
     \ ?     [line("'{"), line("'}")]

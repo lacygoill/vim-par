@@ -11,10 +11,6 @@ let g:loaded_par = 1
 " I'm not sure our mappings handle comments with 2 parts (html, c) that well.
 
 " TODO:
-" Why do we need a `gqq()` function in the first place?
-" We should be able to use our custom `gq` operator.
-
-" TODO:
 " Make `SPC p` smarter.
 " When we press it while on some comment, it should:
 "
@@ -62,14 +58,10 @@ nno  <silent><unique>  <space>P  mz:<c-u>exe "sil norm \<plug>(par#gq)ip"
 " object has a list header.
 " If it does, the wrapper should execute `gw`, otherwise `gq`.
 "}}}
-" Why do you create `<plug>` mappings?{{{
+" Why do you create a `<plug>` mapping?{{{
 "
-" We have 2 mappings which currently invoke the default `gq`:
-"
-"         • gqq
-"         • <space>p
-"
-" We want them to invoke our custom wrapper, and `<plug>` mappings are easier to use.
+" `SPC p` invokes the default `gq`.
+" We want it to invoke our custom wrapper, and a `<plug>` mapping is easier to use.
 "}}}
 nmap  <unique>  gq             <plug>(par#gq)
 nno   <silent>  <plug>(par#gq)  :<c-u>set opfunc=par#gq<cr>g@
@@ -79,14 +71,7 @@ xno   <silent>  <plug>(par#gq)  :<c-u>call par#gq('vis')<cr>
 
 " gqq {{{2
 
-" Purpose:{{{
-"
-" When we hit `gqq`  on a commented line, and `par` breaks the  line in 2 lines,
-" the 2nd line is not commented.
-" We want it to be commented, and `par` to be reinvoked on the 2 lines.
-"}}}
-nmap <unique>  gqq              <plug>(par#gqq)
-nno  <silent>  <plug>(par#gqq)  :<c-u>call par#gqq()<cr>
+nmap <silent><unique>  gqq  gq_
 
 " gqs {{{2
 
