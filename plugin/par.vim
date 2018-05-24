@@ -4,6 +4,19 @@ endif
 let g:loaded_par = 1
 
 " TODO:
+" Try to merge `par#gq()` and `par#split_paragraph()`.
+" Also, shouldn't we rename the plugin `vim-format`?
+
+" FIXME:
+" Select the first of the two following lines:
+" • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
+" • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
+"
+" Press `gq`.
+" Both lines are formatted.
+" Only the first should be formatted.
+
+" TODO:
 " I'm not sure our mappings handle comments with 2 parts (html, c) that well.
 
 " TODO:
