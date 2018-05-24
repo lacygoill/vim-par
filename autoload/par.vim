@@ -1,42 +1,5 @@
-fu! par#format_comment() abort "{{{1
-    let cur_line = line('.')
-    norm! mz
-    " select the current comment
-    call comment#object(1, '\|[┘└┐┌│─]\|^\s*"\s*\S\+:')
-    "                         │         │
-    "                         │         └─ and ignore a title (vimCommentTitle)
-    "                         └─ but ignore lines in a diagram
-    " TODO:
-    " This is an ugly hack.
-    " It's not needed anymore.
-    "
-    " Look  at how  we dealt  with lines  containing multibyte  characters (such
-    " as│), in `par#gq()`.
-    "
-    " Hint: in  the configuration  of `$  par`, we (ab)use  the notion  of quote
-    " characters.
-    "
-    " Once you've removed this hack.
-    " Simplify  the  code in  `vim-comment`,  by  removing the  second  optional
-    " argument passed to `comment#object()`.
-
-    exe "norm! \e"
-    "           │
-    "           └─ the '< '> marks are not set until we get back to normal mode
-
-    " format the comment
-    if line("'<") ==# line("'>") || cur_line < line("'<") || cur_line > line("'>")
-        return
-    else
-        exe "norm gv\<plug>(my_gq)"
-    endif
-
-    sil! norm! `z
-    sil! call repeat#set("\<plug>(my_format_comment)", v:count1)
-endfu
-
-
-fu! par#gq(type) abort "{{{1
+" Interface {{{1
+fu! par#gq(type) abort "{{{2
     let ai_save = &l:ai
     try
         " 'ai' needs to be set so that `gw` can properly indent the formatted lines.
@@ -98,7 +61,7 @@ fu! par#gq(type) abort "{{{1
     endtry
 endfu
 
-fu! par#gqq() abort "{{{1
+fu! par#gqq() abort "{{{2
     norm! mz
 
     let was_commented = !empty(&l:cms)
@@ -123,7 +86,7 @@ fu! par#gqq() abort "{{{1
     sil! call repeat#set("\<plug>(my_gqq)", v:count1)
 endfu
 
-fu! par#split_paragraph(compact, mode) abort "{{{1
+fu! par#split_paragraph(compact, mode) abort "{{{2
     let [firstline, lastline] = a:mode is# 'n'
     \ ?     [line("'{"), line("'}")]
     \ :     [line("'<"), line("'>")]
@@ -152,7 +115,7 @@ fu! par#split_paragraph(compact, mode) abort "{{{1
     endif
 
     try
-        call s:foobar(lnum1, lnum2)
+        call s:remove_hyphens_and_join(lnum1, lnum2)
 
         " break the line down according to the punctuation
         let pat = '\C[.!?]\zs\%(\s\+[.a-z]\@!\|$\)\|:\zs\s*$'
@@ -160,6 +123,7 @@ fu! par#split_paragraph(compact, mode) abort "{{{1
         "                            │└ don't break something like`i.e.`
         "                            │
         "                            └ don't break something like `...`
+
         " Why [.a-z]\@! instead of \u (uppercase character)?{{{
         "
         " A sentence doesn't always begin with an uppercase character.
@@ -176,8 +140,8 @@ fu! par#split_paragraph(compact, mode) abort "{{{1
         "}}}
         sil keepj keepp -,g/^\s*$/d_
 
-        " format with `$ par`
-        sil exe printf('keepj keepp %d,%dg/\S/norm gqq', lnum1, line('.'))
+        " format each non-empty line with `par#gqq()`
+        sil exe printf('keepj keepp %d,%dg/\S/sil call par#gqq()', lnum1, line('.'))
 
         " remove empty lines
         if a:compact
@@ -196,20 +160,16 @@ fu! par#split_paragraph(compact, mode) abort "{{{1
     endtry
 endfu
 
-fu! s:foobar(lnum1, lnum2) abort "{{{1
+" {{{1
+" Util {{{1
+fu! s:remove_hyphens_and_join(lnum1, lnum2) abort "{{{2
     let [lnum1, lnum2] = [a:lnum1, a:lnum2]
 
     " Replace soft hyphens which we sometimes copy from a pdf.
     " They are annoying because they mess up the display of nearby characters.
     sil exe 'keepj keepp '.lnum1.','.lnum2.'s/\%u00ad/-/ge'
 
-    " In a markdown file, we could have a leading `>` in front of quoted lines.
-    " The next `:j` won't remove them. We need to do it manually, and keep only
-    " the first one.
-    sil exe 'keepj '.(lnum1+(lnum1 < lnum2 ? 1 : 0)).','.lnum2.'s/^>//e'
-
-    " Replace every hyphen used at the end of  a line to break a word on two
-    " lines, with a ‘C-a’.
+    " Replace every hyphen breaking a word on two lines, with a ‘C-a’.
     " Why?{{{
     "
     " Because we don't want them. So, we mark them now, to remove them later.
@@ -220,8 +180,14 @@ fu! s:foobar(lnum1, lnum2) abort "{{{1
     " This would cause the next `:j` to join too many lines.
     "}}}
     sil exe 'keepj keepp '.lnum1.','.lnum2.'s/[\u2010-]\ze\n\s*\S\+/'."\<c-a>".'/ge'
+
+    " In a markdown file, we could have a leading `>` in front of quoted lines.
+    " The next `:j` won't remove them. We need to do it manually, and keep only
+    " the first one.
+    sil exe 'keepj '.(lnum1+(lnum1 < lnum2 ? 1 : 0)).','.lnum2.'s/^>//e'
     " join all the lines in a single one
     sil exe 'keepj '.lnum1.','.lnum2.'j'
+
     " Now that we've joined all the lines, remove every ‘C-a’.
     sil exe "keepj keepp s/\<c-a>\\s*//ge"
 endfu

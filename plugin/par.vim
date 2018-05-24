@@ -14,6 +14,17 @@ let g:loaded_par = 1
 " Because `par#split_paragraph()` correctly deals with hyphens.
 " Not `par#gq()`. Not consistent.
 
+" TODO:
+" Make `SPC p` smarter.
+" When we press it while on some comment, it should:
+"
+"     • select the right comment
+"       stop when it finds an empty commented line, or a fold
+"
+"     • ignore the code above/below
+"
+"     • handle correctly diagrams
+
 " Mappings {{{1
 
 "                                                      ┌─ don't write:
@@ -63,9 +74,6 @@ nno  <silent>  <plug>(split-paragraph)  :<c-u>call par#split_paragraph(0, 'n')<c
 
 xmap <silent><unique>  <space>p      :<c-u>call par#split_paragraph(1, 'x')<cr>
 xmap <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph(0, 'x')<cr>
-
-nmap  <unique>  gqic                       <plug>(my_format_comment)
-nno   <silent>  <plug>(my_format_comment)  :<c-u>call par#format_comment()<cr>
 
 " remove excessive spaces
 nno  <silent><unique>  gqs  :<c-u>s/\s\{2,}/ /gc<cr>
