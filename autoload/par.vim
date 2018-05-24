@@ -4,22 +4,18 @@ fu! par#gq(type) abort "{{{2
         return
     endif
 
-    let ai_save = &l:ai
     try
         let [lnum1, lnum2] = s:get_range('gq', a:type)
         let cml = s:get_cml('with_equal_quantifier')
-        let has_a_list_header = getline(lnum1) =~# &l:flp
         let has_diagram = getline(lnum1) =~# '^\s*'.cml.'\s*[│┌]'
+
+        if s:has_to_format_a_list(lnum1)
+            call s:format_list(lnum1, lnum2)
 
         " If 'fp' doesn't invoke `$ par`, but something else like `$ js-beautify`,
         " we should let the external program do its job without interfering.
-        if s:get_fp() !~# '^par\s'
+        elseif s:get_fp() !~# '^par\s'
             sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
-
-        elseif has_a_list_header
-            " 'ai' needs to be set so that `gw` can properly indent the formatted lines
-            setl ai
-            sil exe 'norm! '.lnum1.'Ggw'.lnum2.'G'
 
         elseif has_diagram
             call s:gq_in_diagram(lnum1, lnum2)
@@ -29,8 +25,6 @@ fu! par#gq(type) abort "{{{2
         endif
     catch
         return lg#catch_error()
-    finally
-        let &l:ai = ai_save
     endtry
 endfu
 
@@ -43,8 +37,8 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
     try
         let [lnum1, lnum2] = s:get_range('split-paragraph', a:mode)
 
-        if s:has_to_format_a_list(lnum1, a:mode)
-            sil exe 'norm! '.lnum1.'Ggw'.lnum2.'G'
+        if s:has_to_format_a_list(lnum1)
+            call s:format_list(lnum1, lnum2)
             return
         endif
 
@@ -189,6 +183,19 @@ fu! s:gq_in_diagram(lnum1, lnum2) abort "{{{2
     \ {"\x01": '┌', "\x02": '┐', "\x03": '└', "\x04": '┘'})
 endfu
 
+fu! s:format_list(lnum1, lnum2) abort "{{{2
+    let ai_save = &l:ai
+    try
+        " 'ai' needs to be set so that `gw` can properly indent the formatted lines
+        setl ai
+        sil exe 'norm! '.a:lnum1.'Ggw'.a:lnum2.'G'
+    catch
+        return lg#catch_error()
+    finally
+        let &l:ai = ai_save
+    endtry
+endfu
+
 fu! s:make_sure_properly_commented(lnum1, lnum2) abort "{{{2
     for i in range(a:lnum1, a:lnum2)
         if !s:is_commented(i)
@@ -298,11 +305,11 @@ fu! s:get_range(for_who, mode) abort "{{{2
     return [lnum1, lnum2]
 endfu
 
-fu! s:has_to_format_a_list(lnum1, mode) abort "{{{2
+fu! s:has_to_format_a_list(lnum1) abort "{{{2
     " Format sth like this:
     "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
     "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
-    return getline(a:lnum1) =~# &l:flp && s:get_fp() =~# '^par\s' && a:mode is# 'n'
+    return getline(a:lnum1) =~# &l:flp && s:get_fp() =~# '^par\s'
 endfu
 
 fu! s:is_commented(...) abort "{{{2
