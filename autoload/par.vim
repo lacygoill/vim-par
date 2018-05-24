@@ -1,23 +1,25 @@
 " Interface {{{1
 fu! par#gq(type) abort "{{{2
-    if getline('.') =~# '^\s*$'
+    " If 'fp' doesn't invoke `$ par`, but something else like `$ js-beautify`,
+    " we should let the external program do its job without interfering.
+    if s:get_fp() !~# '^par\s'
+        sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
         return
     endif
 
     try
         let [lnum1, lnum2] = s:get_range('gq', a:type)
         let cml = s:get_cml('with_equal_quantifier')
-        let has_diagram = getline(lnum1) =~# '^\s*'.cml.'\s*[│┌]'
-
-        if s:has_to_format_a_list(lnum1)
-            call s:format_list(lnum1, lnum2)
 
         " If 'fp' doesn't invoke `$ par`, but something else like `$ js-beautify`,
         " we should let the external program do its job without interfering.
-        elseif s:get_fp() !~# '^par\s'
+        if s:get_fp() !~# '^par\s'
             sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
 
-        elseif has_diagram
+        elseif s:has_to_format_a_list(lnum1)
+            call s:format_list(lnum1, lnum2)
+
+        elseif getline(lnum1) =~# '^\s*'.cml.'\s*[│┌]'
             call s:gq_in_diagram(lnum1, lnum2)
 
         else
