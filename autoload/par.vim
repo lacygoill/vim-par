@@ -39,10 +39,7 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
     try
         let [lnum1, lnum2] = s:get_range('split-paragraph', a:mode)
 
-        " Format sth like this:
-        "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
-        "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
-        if getline(lnum1) =~# &l:flp && s:get_fp() =~# '^par\s' && a:mode is# 'n'
+        if s:has_to_format_a_list(lnum1, mode)
             sil exe 'norm! '.lnum1.'Ggw'.lnum2.'G'
             return
         endif
@@ -273,6 +270,13 @@ fu! s:get_range(for_who, mode) abort "{{{2
     \ :     lastline
 
     return [lnum1, lnum2]
+endfu
+
+fu! s:has_to_format_a_list(lnum1, mode) abort "{{{2
+    " Format sth like this:
+    "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
+    "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
+    return getline(a:lnum1) =~# &l:flp && s:get_fp() =~# '^par\s' && a:mode is# 'n'
 endfu
 
 fu! s:is_commented(...) abort "{{{2
