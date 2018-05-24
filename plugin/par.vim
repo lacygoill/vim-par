@@ -16,6 +16,9 @@ let g:loaded_par = 1
 " In particular when there're several diagram characters on a single line.
 
 " TODO:
+" Does `gqq` correctly handle a count?
+
+" TODO:
 " Make `SPC p` smarter.
 " When we press it while on some comment, it should:
 "

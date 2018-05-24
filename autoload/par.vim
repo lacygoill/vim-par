@@ -112,22 +112,14 @@ fu! par#gqq() abort "{{{2
 endfu
 
 fu! par#split_paragraph(mode, ...) abort "{{{2
-    let [firstline, lastline] = a:mode is# 'n'
-    \ ?     [line("'{"), line("'}")]
-    \ :     [line("'<"), line("'>")]
+    let [lnum1, lnum2] = s:get_range(a:mode)
 
-    " get the address of the first line
-    let lnum1 = firstline ==# 1 && getline(1) =~# '\S'
-    \ ?             1
-    \ :             firstline + 1
-
-    " get the address of the last line of the paragraph/selection
-    let lnum2 = a:mode is# 'n' && getline(lastline) =~# '^\s*$'
-    \ ?             lastline - 1
-    \ :             lastline
-
-    if getline(lnum1) =~# &l:flp && a:mode is# 'n'
-        return feedkeys("\<plug>(my_gq)ip", 'i')
+    " Format sth like this:
+    "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
+    "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
+    if getline(lnum1) =~# &l:flp && &l:fp =~# '^par\s' && a:mode is# 'n'
+        sil exe 'norm! '.lnum1.'Ggw'.lnum2.'G'
+        return
     endif
 
     let pos = getcurpos()
@@ -187,6 +179,24 @@ endfu
 
 " {{{1
 " Util {{{1
+fu! s:get_range(mode) abort "{{{2
+    let [firstline, lastline] = a:mode is# 'n'
+    \ ?     [line("'{"), line("'}")]
+    \ :     [line("'<"), line("'>")]
+
+    " get the address of the first line
+    let lnum1 = firstline ==# 1 && getline(1) =~# '\S'
+    \ ?             1
+    \ :             firstline + 1
+
+    " get the address of the last line of the paragraph/selection
+    let lnum2 = a:mode is# 'n' && getline(lastline) =~# '^\s*$'
+    \ ?             lastline - 1
+    \ :             lastline
+
+    return [lnum1, lnum2]
+endfu
+
 fu! s:prepare(lnum1, lnum2, cmd) abort "{{{2
     let [lnum1, lnum2] = [a:lnum1, a:lnum2]
     let range = lnum1.','.lnum2
