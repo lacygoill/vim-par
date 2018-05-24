@@ -14,7 +14,7 @@ fu! par#gq(type) abort "{{{2
         let has_a_list_header = getline(lnum1) =~# &l:flp
         let has_diagram = getline(lnum1) =~# '^\s*'.cml.'\s*[│┌]'
 
-        if &l:fp isnot# $my_par_cmd
+        if &l:fp =~# '^par\s'
             sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
 
         elseif has_a_list_header

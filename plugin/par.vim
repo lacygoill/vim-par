@@ -118,8 +118,6 @@ nno  <silent><unique>  gqs  :<c-u>s/\s\{2,}/ /gc <bar> sil! call repeat#set('gqs
 "                   │  ││││ plain text version of an email}}}
 set fp=par\ -w80rjeq
 
-let $my_par_cmd = &fp
-"}}}
 " formatoptions {{{2
 
 " 'formatoptions' / 'fo' handles the automatic formatting of text.
