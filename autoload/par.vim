@@ -20,7 +20,7 @@ fu! par#gq(type) abort "{{{2
         elseif has_diagram
 
             sil exe printf('keepj keepp %d,%ds/[┌┐└┘]/\="│ ".%s[submatch(0)]/e', lnum1, lnum2,
-            \ {'┌': "\<c-a>", '┐': "\<c-b>", '└': "\<c-c>", '┘': "\<c-d>"})
+            \ {'┌': "\x01", '┐': "\x02", '└': "\x03", '┘': "\x04"})
             " FIXME:
             " What if `&fp` has changed?
             " Read `vim-toggle-settings`. Look for `s:formatprg(`.
@@ -37,11 +37,13 @@ fu! par#gq(type) abort "{{{2
             "}}}
             let lnum2 = line("']")
             sil exe printf('keepj keepp %d,%ds/│ \([\x01\x02\x03\x04]\)/\=%s[submatch(1)]/e', lnum1, lnum2,
-            \ {"\<c-a>": '┌', "\<c-b>": '┐', "\<c-c>": '└', "\<c-d>": '┘'})
+            \ {"\x01": '┌', "\x02": '┐', "\x03": '└', "\x04": '┘'})
 
         else
+            " remove undesired hyphens
             call s:prepare(lnum1, lnum2, 'gq')
             sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
+            " `s:prepare()` may have left some ‘C-a’s.
             sil exe lnum1.','.lnum2.'s/\%x01\s\+//ge'
         endif
     catch
@@ -166,10 +168,11 @@ endfu
 " Util {{{1
 fu! s:prepare(lnum1, lnum2, cmd) abort "{{{2
     let [lnum1, lnum2] = [a:lnum1, a:lnum2]
+    let range = lnum1.','.lnum2
 
     " Replace soft hyphens which we sometimes copy from a pdf.
     " They are annoying because they mess up the display of nearby characters.
-    sil exe 'keepj keepp '.lnum1.','.lnum2.'s/\%u00ad/-/ge'
+    sil exe 'keepj keepp '.range.'s/\%u00ad/-/ge'
 
     " pattern describing a hyphen breaking a word on two lines
     let pat = '[\u2010-]\ze\n\s*\S\+'
@@ -180,10 +183,24 @@ fu! s:prepare(lnum1, lnum2, cmd) abort "{{{2
     "}}}
     " Ok, but why don't you remove them right now?{{{
     "
-    " Because it could alter the range (more specifically, it could reduce `lnum2`).
-    " This would cause the next `:j` to join too many lines.
-        "}}}
-    sil exe 'keepj keepp '.lnum1.','.lnum2.'s/'.pat.'/'."\<c-a>".'/ge'
+    " We need to also remove the spaces which may come after on the next line.
+    " Otherwise, a word like:
+    "
+    "       spec-
+    "       ification
+    "
+    " ... could be transformed like this:
+    "
+    "       spec  ification
+    "
+    " At that  point, we would  have no way  to determine whether  2 consecutive
+    " words are in fact the 2 parts of a single word which need to be merged.
+    " So we need  to remove the hyphen,  and the newline, and the  spaces all at
+    " once.
+    " But if we  do that now, we'll  alter the range, which will  cause the next
+    " commands (:join, gq) from operating on the wrong lines.
+    "}}}
+    sil exe 'keepj keepp '.range.'s/'.pat.'/\%x01/ge'
 
     if a:cmd is# 'split_paragraph'
         " In a markdown file, we could have a leading `>` in front of quoted lines.
@@ -193,7 +210,7 @@ fu! s:prepare(lnum1, lnum2, cmd) abort "{{{2
         sil exe 'keepj '.(lnum1+(lnum1 < lnum2 ? 1 : 0)).','.lnum2.'s/^>//e'
 
         " join all the lines in a single one
-        sil exe 'keepj '.lnum1.','.lnum2.'j'
+        sil exe 'keepj '.range.'j'
 
         " Now that we've joined all the lines, remove every ‘C-a’.
         sil keepj keepp s/\%x01\s*//ge
