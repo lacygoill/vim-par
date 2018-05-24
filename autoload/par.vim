@@ -2,9 +2,6 @@
 fu! par#gq(type) abort "{{{2
     let ai_save = &l:ai
     try
-        " 'ai' needs to be set so that `gw` can properly indent the formatted lines.
-        setl ai
-
         let [lnum1, lnum2] = s:get_range('gq', a:type)
         let cml = s:get_cml()
         let has_a_list_header = getline(lnum1) =~# &l:flp
@@ -16,6 +13,8 @@ fu! par#gq(type) abort "{{{2
             sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
 
         elseif has_a_list_header
+            " 'ai' needs to be set so that `gw` can properly indent the formatted lines
+            setl ai
             sil exe 'norm! '.lnum1.'Ggw'.lnum2.'G'
 
         elseif has_diagram
