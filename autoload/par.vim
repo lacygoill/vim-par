@@ -31,6 +31,10 @@ fu! par#gq(type) abort "{{{2
 endfu
 
 fu! par#split_paragraph(mode, ...) abort "{{{2
+    if getline('.') =~# '^\s*$'
+        return
+    endif
+
     let [lnum1, lnum2] = s:get_range('split-paragraph', a:mode)
 
     " Format sth like this:
