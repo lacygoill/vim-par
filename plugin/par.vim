@@ -85,8 +85,8 @@ xno   <silent>  <plug>(par#gq)  :<c-u>call par#gq('vis')<cr>
 " the 2nd line is not commented.
 " We want it to be commented, and `par` to be reinvoked on the 2 lines.
 "}}}
-nmap <unique>  gqq              <plug>(my_gqq)
-nno  <silent>  <plug>(my_gqq)  :<c-u>call par#gqq()<cr>
+nmap <unique>  gqq              <plug>(par#gqq)
+nno  <silent>  <plug>(par#gqq)  :<c-u>call par#gqq()<cr>
 
 " gqs {{{2
 
