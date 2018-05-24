@@ -5,10 +5,7 @@ fu! par#gq(type) abort "{{{2
         " 'ai' needs to be set so that `gw` can properly indent the formatted lines.
         setl ai
 
-        let [lnum1, lnum2] = a:type is# 'vis'
-                         \ ?     [line("'<"), line("'>")]
-                         \ :     [line("'["), line("']")]
-
+        let [lnum1, lnum2] = s:get_range('gq', a:type)
         let cml = s:get_cml()
         let has_a_list_header = getline(lnum1) =~# &l:flp
         let has_diagram = getline(lnum1) =~# '^\s*'.cml.'\s*[│┌]'
@@ -95,7 +92,7 @@ fu! par#gq(type) abort "{{{2
 endfu
 
 fu! par#split_paragraph(mode, ...) abort "{{{2
-    let [lnum1, lnum2] = s:get_range(a:mode)
+    let [lnum1, lnum2] = s:get_range('split-paragraph', a:mode)
 
     " Format sth like this:
     "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
@@ -248,7 +245,13 @@ fu! s:get_fp() abort "{{{2
     \ :        &l:fp
 endfu
 
-fu! s:get_range(mode) abort "{{{2
+fu! s:get_range(for_who, mode) abort "{{{2
+    if a:for_who is# 'gq'
+        return a:mode is# 'vis'
+        \ ?        [line("'<"), line("'>")]
+        \ :        [line("'["), line("']")]
+    endif
+
     let [firstline, lastline] = a:mode is# 'n'
     \ ?     [line("'{"), line("'}")]
     \ :     [line("'<"), line("'>")]
