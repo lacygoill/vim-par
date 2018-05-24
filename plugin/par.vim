@@ -44,11 +44,11 @@ xmap <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph('x', 'with-e
 
 "                                                      ┌─ don't write:
 "                                                      │
-"                                                      │      'sil norm <plug>(my_gq)ip'
+"                                                      │      'sil norm <plug>(par#gq)ip'
 "                                                      │
 "                                                      │  because `:norm` needs `\<plug>`
 "                                                      │
-nno  <silent><unique>  <space>P  mz:<c-u>exe "sil norm \<plug>(my_gq)ip"
+nno  <silent><unique>  <space>P  mz:<c-u>exe "sil norm \<plug>(par#gq)ip"
                                  \ <bar> sil update
                                  \ <bar> sil! norm! `z<cr>
 
@@ -71,11 +71,11 @@ nno  <silent><unique>  <space>P  mz:<c-u>exe "sil norm \<plug>(my_gq)ip"
 "
 " We want them to invoke our custom wrapper, and `<plug>` mappings are easier to use.
 "}}}
-nmap  <unique>  gq             <plug>(my_gq)
-nno   <silent>  <plug>(my_gq)  :<c-u>set opfunc=par#gq<cr>g@
+nmap  <unique>  gq             <plug>(par#gq)
+nno   <silent>  <plug>(par#gq)  :<c-u>set opfunc=par#gq<cr>g@
 
-xmap  <unique>  gq             <plug>(my_gq)
-xno   <silent>  <plug>(my_gq)  :<c-u>call par#gq('vis')<cr>
+xmap  <unique>  gq             <plug>(par#gq)
+xno   <silent>  <plug>(par#gq)  :<c-u>call par#gq('vis')<cr>
 
 " gqq {{{2
 

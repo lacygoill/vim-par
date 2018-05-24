@@ -94,7 +94,7 @@ fu! par#gqq() abort "{{{2
     let orig = line('.')
 
     " format `cnt` lines
-    exe "sil norm \<plug>(my_gq)".cnt.'_'
+    exe "sil norm \<plug>(par#gq)".cnt.'_'
 
     " if the line was commented, and has been split into several new lines (i.e.
     " the current line address has changed)
@@ -103,7 +103,7 @@ fu! par#gqq() abort "{{{2
         " then comment the lines between the new lines
         exe range.'CommentToggle'
         " and format them
-        exe "sil norm \<plug>(my_gq)".(line('.')-orig).'k'
+        exe "sil norm \<plug>(par#gq)".(line('.')-orig).'k'
     endif
 
     sil! norm! `z
