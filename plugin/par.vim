@@ -19,15 +19,44 @@ let g:loaded_par = 1
 "     • handle correctly diagrams
 
 " Mappings {{{1
-" gq & friends {{{2
+" SPC p {{{2
 
+nmap <unique>  <space>p                         <plug>(split-paragraph-compact)
+nno  <silent>  <plug>(split-paragraph-compact)  :<c-u>call par#split_paragraph(1, 'n')<cr>
+
+xmap <silent><unique>  <space>p      :<c-u>call par#split_paragraph(1, 'x')<cr>
+
+" SPC C-p {{{2
+
+nmap <unique>  <space><c-p>             <plug>(split-paragraph)
+nno  <silent>  <plug>(split-paragraph)  :<c-u>call par#split_paragraph(0, 'n')<cr>
+
+xmap <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph(0, 'x')<cr>
+
+" SPC P {{{2
+
+"                                                      ┌─ don't write:
+"                                                      │
+"                                                      │      'sil norm <plug>(my_gq)ip'
+"                                                      │
+"                                                      │  because `:nno` doesn't translate `<plug>`.
+"                                                      │
+nno  <silent><unique>  <space>P  mz:<c-u>exe "sil norm \<plug>(my_gq)ip"
+                                 \ <bar> sil update
+                                 \ <bar> sil! norm! `z<cr>
+
+" gq {{{2
+
+" Purpose:{{{
+"
 " The default `gq` invokes `par` which doesn't recognize bullet lists.
 " OTOH, `gw` recognizes them thanks to 'flp'.
 " We create a wrapper around `gq`, which checks whether the 1st line of the text
-" object  has a  list  header. If  it does,  the  wrapper  should execute  `gw`,
-" otherwise `gq`.
+" object has a list header.
+" If it does, the wrapper should execute `gw`, otherwise `gq`.
+"}}}
 
-" Why do we create `<plug>` mappings?{{{
+" Why do you create `<plug>` mappings?{{{
 "
 " We have 2 mappings which currently invoke the default `gq`:
 "
@@ -42,36 +71,21 @@ nno   <silent>  <plug>(my_gq)  :<c-u>set opfunc=par#gq<cr>g@
 xmap  <unique>  gq             <plug>(my_gq)
 xno   <silent>  <plug>(my_gq)  :<c-u>call par#gq('vis')<cr>
 
-" When we hit `gqq`  on a commented line, and `par` breaks the  line in 2 lines,
-" the 2nd  line is not commented. We  want it to  be commented, and `par`  to be
-" reinvoked on the 2 lines.
+" gqq {{{2
 
+" Purpose:{{{
+"
+" When we hit `gqq`  on a commented line, and `par` breaks the  line in 2 lines,
+" the 2nd line is not commented.
+" We want it to be commented, and `par` to be reinvoked on the 2 lines.
+"}}}
 nmap <unique>  gqq              <plug>(my_gqq)
 nno  <silent>  <plug>(my_gqq)  :<c-u>call par#gqq()<cr>
 
+" gqs {{{2
+
 " remove excessive spaces
 nno  <silent><unique>  gqs  :<c-u>s/\s\{2,}/ /gc<cr>
-
-" SPC p & friends {{{2
-
-nmap <unique>  <space>p                         <plug>(split-paragraph-compact)
-nno  <silent>  <plug>(split-paragraph-compact)  :<c-u>call par#split_paragraph(1, 'n')<cr>
-
-nmap <unique>  <space><c-p>             <plug>(split-paragraph)
-nno  <silent>  <plug>(split-paragraph)  :<c-u>call par#split_paragraph(0, 'n')<cr>
-
-xmap <silent><unique>  <space>p      :<c-u>call par#split_paragraph(1, 'x')<cr>
-xmap <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph(0, 'x')<cr>
-
-"                                                      ┌─ don't write:
-"                                                      │
-"                                                      │      'sil norm <plug>(my_gq)ip'
-"                                                      │
-"                                                      │  because `:nno` doesn't translate `<plug>`.
-"                                                      │
-nno  <silent><unique>  <space>P  mz:<c-u>exe "sil norm \<plug>(my_gq)ip"
-                                 \ <bar> sil update
-                                 \ <bar> sil! norm! `z<cr>
 
 " Options {{{1
 
