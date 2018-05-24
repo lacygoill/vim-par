@@ -3,8 +3,12 @@ if exists('g:loaded_par')
 endif
 let g:loaded_par = 1
 
-" TODO: I'm not sure our mappings handle diagrams that well.
+" TODO:
+" I'm not sure our mappings handle diagrams that well.
 " In particular when there're several diagram characters on a single line.
+
+" TODO:
+" I'm not sure our mappings handle comments with 2 parts (html, c) that well.
 
 " TODO:
 " Does `gqq` correctly handle a count?
