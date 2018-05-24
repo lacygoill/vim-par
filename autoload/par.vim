@@ -27,18 +27,6 @@ fu! par#gq(type) abort "{{{2
         return lg#catch_error()
     finally
         let &l:ai = ai_save
-        " Why?{{{
-        "
-        " For some reason, if we're editing a help file, and use `gq`, Vim makes
-        " the buffer noreadonly back.
-        " MWE:
-        "     :h
-        "     coH
-        "     :norm! gqq
-        "}}}
-        if &ft is# 'help' && &l:ro
-            setl noro
-        endif
     endtry
 endfu
 
@@ -246,7 +234,7 @@ endfu
 
 " Util {{{1
 fu! s:get_cml() abort "{{{2
-    let cml = split(&l:cms, '%s')[0]
+    let cml = get(split(&l:cms, '%s'), 0)
     return '\%(\V'.escape(cml, '\').'\m\)\='
 endfu
 
