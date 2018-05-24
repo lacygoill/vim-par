@@ -35,25 +35,25 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
         return
     endif
 
-    let [lnum1, lnum2] = s:get_range('split-paragraph', a:mode)
-
-    " Format sth like this:
-    "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
-    "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
-    if getline(lnum1) =~# &l:flp && s:get_fp() =~# '^par\s' && a:mode is# 'n'
-        sil exe 'norm! '.lnum1.'Ggw'.lnum2.'G'
-        return
-    endif
-
-    " The last character of the paragraph needs to be a valid punctuation ending
-    " for a sentence. Otherwise, our function could wrongly delete some lines.
-    if getline(lnum2) =~# '\s*[^.!?:]$'
-        echo 'last char is not a valid punctuation ending for a sentence'
-        return
-    endif
-
     let pos = getcurpos()
     try
+        let [lnum1, lnum2] = s:get_range('split-paragraph', a:mode)
+
+        " Format sth like this:
+        "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
+        "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
+        if getline(lnum1) =~# &l:flp && s:get_fp() =~# '^par\s' && a:mode is# 'n'
+            sil exe 'norm! '.lnum1.'Ggw'.lnum2.'G'
+            return
+        endif
+
+        " The last character of the paragraph needs to be a valid punctuation ending
+        " for a sentence. Otherwise, our function could wrongly delete some lines.
+        if getline(lnum2) =~# '\s*[^.!?:]$'
+            echo 'last char is not a valid punctuation ending for a sentence'
+            return
+        endif
+
         let was_commented = s:is_commented()
 
         call s:prepare(lnum1, lnum2, 'split_paragraph')
@@ -96,15 +96,15 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
             sil exe printf('keepj keepp %d,%dg/^$/d_', lnum1, lnum2)
         endif
 
-        sil update
-        call setpos('.', pos)
-
         " make the mapping repeatable
         if a:mode is# 'n'
             sil! call repeat#set("\<plug>(split-paragraph".(a:0 ? '-with-empty-lines)' : ')'))
         endif
     catch
         return lg#catch_error()
+    finally
+        sil! update
+        call setpos('.', pos)
     endtry
 endfu
 
