@@ -21,7 +21,7 @@ let g:loaded_par = 1
 "     │                     │
 " the quick brown fox jumps over the lazy dog
 "
-" Not only the formatting is wrong, but a `C-a` has not been removed.
+" Not only the formatting is wrong, but a `C-b` has not been removed.
 
 " TODO:
 " Make `SPC p` smarter.
