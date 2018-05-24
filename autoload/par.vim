@@ -88,7 +88,7 @@ endfu
 
 fu! par#gqq() abort "{{{2
     let cnt = v:count1
-    norm! mz
+    let pos = getcurpos()
 
     let was_commented = s:is_commented()
     let orig = line('.')
@@ -106,7 +106,7 @@ fu! par#gqq() abort "{{{2
         exe "sil norm \<plug>(par#gq)".(line('.')-orig).'k'
     endif
 
-    sil! norm! `z
+    call setpos('.', pos)
     sil! call repeat#set("\<plug>(par#gqq)", cnt)
 endfu
 
