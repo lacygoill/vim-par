@@ -52,9 +52,19 @@ fu! par#gq(type) abort "{{{2
             " `s:prepare()` may have left some ‘C-a’s
             sil exe lnum1.','.lnum2.'s/\%x01\s*//ge'
 
+            " Why?{{{
+            "
             " Since we may have altered the  text after removing some ‘C-a’s, we
-            " need to re-format  the text-object, to be sure that  `gq` has done
-            " its job correctly, and is omnipotent.
+            " need  to re-format  it, to  be  sure that  `gq` has  done its  job
+            " correctly, and that the operation is omnipotent.
+            "
+            " Had we removed the hyphens before invoking `gq`, we would not need
+            " to re-format.
+            " But  removing them,  and the  newlines which  follow, BEFORE  `gq`
+            " would alter the range.
+            " I don't want to recompute the range.
+            " It's easier to remove them AFTER `gq`, and re-format a second time.
+            "}}}
             sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
         endif
     catch
