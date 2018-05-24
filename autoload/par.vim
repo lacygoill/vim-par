@@ -57,7 +57,7 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
 
         let was_commented = s:is_commented()
 
-        call s:prepare(lnum1, lnum2, 'split_paragraph')
+        call s:remove_hyphens(lnum1, lnum2, 'split_paragraph')
 
         " break the line down according to the punctuation
         let pat = '\C[.!?]\zs\%(\s\+[.a-z]\@!\|$\)\|:\zs\s*$'
@@ -114,13 +114,13 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
     let was_commented = s:is_commented()
 
     " remove undesired hyphens
-    call s:prepare(lnum1, lnum2, 'gq')
+    call s:remove_hyphens(lnum1, lnum2, 'gq')
 
     " format the text-object
     sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
     let lnum2 = line("']")
 
-    " `s:prepare()` may have left some ‘C-a’s
+    " `s:remove_hyphens()` may have left some ‘C-a’s
     sil exe lnum1.','.lnum2.'s/\%x01\s*//ge'
 
     " Why?{{{
@@ -197,7 +197,7 @@ fu! s:make_sure_properly_commented(lnum1, lnum2) abort "{{{2
     endfor
 endfu
 
-fu! s:prepare(lnum1, lnum2, cmd) abort "{{{2
+fu! s:remove_hyphens(lnum1, lnum2, cmd) abort "{{{2
     let [lnum1, lnum2] = [a:lnum1, a:lnum2]
     let range = lnum1.','.lnum2
 
