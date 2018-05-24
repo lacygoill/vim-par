@@ -122,8 +122,6 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
         return
     endif
 
-    let pos = getcurpos()
-
     " The last character of the paragraph needs to be a valid punctuation ending
     " for a sentence. Otherwise, our function could wrongly delete some lines.
     if getline(lnum2) =~# '\s*[^.!?:]$'
@@ -131,6 +129,7 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
         return
     endif
 
+    let pos = getcurpos()
     try
         call s:prepare(lnum1, lnum2, 'split_paragraph')
 
@@ -186,13 +185,13 @@ fu! s:get_range(mode) abort "{{{2
 
     " get the address of the first line
     let lnum1 = firstline ==# 1 && getline(1) =~# '\S'
-    \ ?             1
-    \ :             firstline + 1
+    \ ?     1
+    \ :     firstline + 1
 
     " get the address of the last line of the paragraph/selection
     let lnum2 = a:mode is# 'n' && getline(lastline) =~# '^\s*$'
-    \ ?             lastline - 1
-    \ :             lastline
+    \ ?     lastline - 1
+    \ :     lastline
 
     return [lnum1, lnum2]
 endfu
