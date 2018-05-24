@@ -23,6 +23,15 @@ let g:loaded_par = 1
 
 " TODO:
 " I'm not sure our mappings handle comments with 2 parts (html, c) that well.
+" MWE:
+" select the 3 lines of the following diagram, and press `gq`
+"
+"     ┌ some comment
+"     │                     ┌ some comment
+"     │                     │
+" the quick brown fox jumps over the lazy dog
+"
+" Not only the formatting is wrong, but a `C-a` has not been removed.
 
 " TODO:
 " Make `SPC p` smarter.
