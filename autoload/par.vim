@@ -11,12 +11,7 @@ fu! par#gq(type) abort "{{{2
         let [lnum1, lnum2] = s:get_range('gq', a:type)
         let cml = s:get_cml('with_equal_quantifier')
 
-        " If 'fp' doesn't invoke `$ par`, but something else like `$ js-beautify`,
-        " we should let the external program do its job without interfering.
-        if s:get_fp() !~# '^par\s'
-            sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
-
-        elseif s:has_to_format_a_list(lnum1)
+        if s:has_to_format_a_list(lnum1)
             call s:format_list(lnum1, lnum2)
 
         elseif getline(lnum1) =~# '^\s*'.cml.'\s*[│┌]'
