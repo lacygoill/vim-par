@@ -22,20 +22,23 @@ let g:loaded_par = 1
 " I'm not sure our mappings handle diagrams that well.
 " In particular when there're several diagram characters on a single line.
 
+" TODO:
+" Why is `SPC P` not omnipotent?
+
 " Mappings {{{1
 " SPC p {{{2
 
-nmap <unique>  <space>p                         <plug>(split-paragraph-compact)
-nno  <silent>  <plug>(split-paragraph-compact)  :<c-u>call par#split_paragraph(1, 'n')<cr>
+nmap <unique>  <space>p                 <plug>(split-paragraph)
+nno  <silent>  <plug>(split-paragraph)  :<c-u>call par#split_paragraph('n')<cr>
 
-xmap <silent><unique>  <space>p  :<c-u>call par#split_paragraph(1, 'x')<cr>
+xmap <silent><unique>  <space>p  :<c-u>call par#split_paragraph('x')<cr>
 
 " SPC C-p {{{2
 
-nmap <unique>  <space><c-p>             <plug>(split-paragraph)
-nno  <silent>  <plug>(split-paragraph)  :<c-u>call par#split_paragraph(0, 'n')<cr>
+nmap <unique>  <space><c-p>                              <plug>(split-paragraph-with-empty-lines)
+nno  <silent>  <plug>(split-paragraph-with-empty-lines)  :<c-u>call par#split_paragraph('n', 'with-empty-lines')<cr>
 
-xmap <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph(0, 'x')<cr>
+xmap <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph('x', 'with-empty-lines')<cr>
 
 " SPC P {{{2
 

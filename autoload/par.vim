@@ -95,7 +95,7 @@ fu! par#gqq() abort "{{{2
     sil! call repeat#set("\<plug>(my_gqq)", v:count1)
 endfu
 
-fu! par#split_paragraph(compact, mode) abort "{{{2
+fu! par#split_paragraph(mode, ...) abort "{{{2
     let [firstline, lastline] = a:mode is# 'n'
     \ ?     [line("'{"), line("'}")]
     \ :     [line("'<"), line("'>")]
@@ -153,7 +153,7 @@ fu! par#split_paragraph(compact, mode) abort "{{{2
         sil exe printf('keepj keepp %d,%dg/\S/sil call par#gqq()', lnum1, line('.'))
 
         " remove empty lines
-        if a:compact
+        if !a:0
             sil exe printf('keepj keepp %d,%dg/^$/d_', lnum1, line('.'))
         endif
 
@@ -162,7 +162,7 @@ fu! par#split_paragraph(compact, mode) abort "{{{2
 
         " make the mapping repeatable
         if a:mode is# 'n'
-            sil! call repeat#set("\<plug>(split-paragraph".(a:compact ? '-compact)' : ')'))
+            sil! call repeat#set("\<plug>(split-paragraph".(a:0 ? '-with-empty-lines)' : ')'))
         endif
     catch
         return lg#catch_error()
