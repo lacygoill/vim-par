@@ -89,9 +89,7 @@ endfu
 fu! par#gqq() abort "{{{2
     norm! mz
 
-    let was_commented = !empty(&l:cms)
-                      \ ?    stridx(getline('.'), split(&l:cms, '%s')[0]) !=# -1
-                      \ :    0
+    let was_commented = s:is_commented()
     let orig = line('.')
 
     " format current line
@@ -194,6 +192,12 @@ fu! s:get_range(mode) abort "{{{2
     \ :     lastline
 
     return [lnum1, lnum2]
+endfu
+
+fu! s:is_commented() abort "{{{2
+    return !empty(&l:cms)
+       \ ?     stridx(getline('.'), split(&l:cms, '%s')[0]) !=# -1
+       \ :     0
 endfu
 
 fu! s:prepare(lnum1, lnum2, cmd) abort "{{{2

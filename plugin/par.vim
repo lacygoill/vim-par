@@ -8,8 +8,8 @@ let g:loaded_par = 1
 " first one are not commented anymore.
 " MWE:
 
-" The quick brown fox jumps over the lazy dog.
-The quick brown fox jumps over the lazy dog.
+"     The quick brown fox jumps over the lazy dog.
+"     The quick brown fox jumps over the lazy dog.
 
 " TODO:
 " I'm not sure our mappings handle diagrams that well.
