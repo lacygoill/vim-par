@@ -9,8 +9,7 @@ fu! par#gq(type) abort "{{{2
                          \ ?     [line("'<"), line("'>")]
                          \ :     [line("'["), line("']")]
 
-        let cml = split(&l:cms, '%s')[0]
-        let cml = '\%(\V'.escape(cml, '\').'\m\)\?'
+        let cml = s:get_cml()
         let has_a_list_header = getline(lnum1) =~# &l:flp
         let has_diagram = getline(lnum1) =~# '^\s*'.cml.'\s*[│┌]'
 
@@ -116,7 +115,6 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
     let pos = getcurpos()
     try
         let was_commented = s:is_commented()
-        let cml = split(&l:cms, '%s')[0]
 
         call s:prepare(lnum1, lnum2, 'split_paragraph')
 
@@ -169,42 +167,7 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
     endtry
 endfu
 
-" {{{1
-" Util {{{1
-fu! s:get_fp() abort "{{{2
-    return &l:fp is# ''
-    \ ?        &g:fp
-    \ :        &l:fp
-endfu
-
-fu! s:get_range(mode) abort "{{{2
-    let [firstline, lastline] = a:mode is# 'n'
-    \ ?     [line("'{"), line("'}")]
-    \ :     [line("'<"), line("'>")]
-
-    " get the address of the first line
-    let lnum1 = firstline ==# 1 && getline(1) =~# '\S'
-    \ ?     1
-    \ :     firstline + 1
-
-    " get the address of the last line of the paragraph/selection
-    let lnum2 = a:mode is# 'n' && getline(lastline) =~# '^\s*$'
-    \ ?     lastline - 1
-    \ :     lastline
-
-    return [lnum1, lnum2]
-endfu
-
-fu! s:is_commented(...) abort "{{{2
-    if empty(&l:cms)
-        return 0
-    else
-        let line = getline(a:0 ? a:1 : line('.'))
-        let cml = split(&l:cms, '%s')[0]
-        return line =~# '^\s*\V'.escape(cml, '\')
-    endif
-endfu
-
+" Core {{{1
 fu! s:make_sure_properly_commented(lnum1, lnum2) abort "{{{2
     for i in range(a:lnum1, a:lnum2)
         if !s:is_commented(i)
@@ -270,6 +233,46 @@ fu! s:prepare(lnum1, lnum2, cmd) abort "{{{2
 
         " Now that we've joined all the lines, remove every ‘C-a’.
         sil keepj keepp s/\%x01\s*//ge
+    endif
+endfu
+
+" Util {{{1
+fu! s:get_cml() abort "{{{2
+    let cml = split(&l:cms, '%s')[0]
+    return '\%(\V'.escape(cml, '\').'\m\)\='
+endfu
+
+fu! s:get_fp() abort "{{{2
+    return &l:fp is# ''
+    \ ?        &g:fp
+    \ :        &l:fp
+endfu
+
+fu! s:get_range(mode) abort "{{{2
+    let [firstline, lastline] = a:mode is# 'n'
+    \ ?     [line("'{"), line("'}")]
+    \ :     [line("'<"), line("'>")]
+
+    " get the address of the first line
+    let lnum1 = firstline ==# 1 && getline(1) =~# '\S'
+    \ ?     1
+    \ :     firstline + 1
+
+    " get the address of the last line of the paragraph/selection
+    let lnum2 = a:mode is# 'n' && getline(lastline) =~# '^\s*$'
+    \ ?     lastline - 1
+    \ :     lastline
+
+    return [lnum1, lnum2]
+endfu
+
+fu! s:is_commented(...) abort "{{{2
+    if empty(&l:cms)
+        return 0
+    else
+        let line = getline(a:0 ? a:1 : line('.'))
+        let cml = split(&l:cms, '%s')[0]
+        return line =~# '^\s*\V'.escape(cml, '\')
     endif
 endfu
 
