@@ -105,17 +105,17 @@ nno  <silent><unique>  gqs  :<c-u>s/\s\{2,}/ /gc <bar> sil! call repeat#set('gqs
 "
 "         rTbgqR B=.,?_A_a Q=_s>|
 
-"                   ┌ no line bigger than 80 characters in the output paragraph{{{
-"                   │
-"                   │  ┌ fill empty comment lines with spaces (e.g.: /*    */)
-"                   │  │
-"                   │  │┌ justify the output so that all lines (except the last)
-"                   │  ││ have the same length, by inserting spaces between words
-"                   │  ││
-"                   │  ││┌ delete (expel) superfluous lines from the output
-"                   │  │││
-"                   │  │││┌ handle nested quotations, often found in the
-"                   │  ││││ plain text version of an email}}}
+"            ┌ no line bigger than 80 characters in the output paragraph{{{
+"            │
+"            │  ┌ fill empty comment lines with spaces (e.g.: /*    */)
+"            │  │
+"            │  │┌ justify the output so that all lines (except the last)
+"            │  ││ have the same length, by inserting spaces between words
+"            │  ││
+"            │  ││┌ delete (expel) superfluous lines from the output
+"            │  │││
+"            │  │││┌ handle nested quotations, often found in the
+"            │  ││││ plain text version of an email}}}
 set fp=par\ -w80rjeq
 
 " formatoptions {{{2

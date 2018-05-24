@@ -28,7 +28,7 @@ fu! par#gq(type) abort "{{{2
             \ {'┌': "\x01", '┐': "\x02", '└': "\x03", '┘': "\x04"})
 
             " format the lines
-            sil exe printf('%s!%s', lnum1.','.lnum2, &fp)
+            sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
 
             " Why?{{{
             "
