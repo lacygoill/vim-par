@@ -36,7 +36,7 @@ let g:loaded_par = 1
 nmap <unique>  <space>p                 <plug>(split-paragraph)
 nno  <silent>  <plug>(split-paragraph)  :<c-u>call par#split_paragraph('n')<cr>
 
-xmap <silent><unique>  <space>p  :<c-u>call par#split_paragraph('x')<cr>
+xno <silent><unique>  <space>p  :<c-u>call par#split_paragraph('x')<cr>
 
 " SPC C-p {{{2
 
