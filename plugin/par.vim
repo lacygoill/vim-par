@@ -84,12 +84,13 @@ nno  <silent>  <plug>(my_gqq)  :<c-u>call par#gqq()<cr>
 " gqs {{{2
 
 " remove excessive spaces
-nno  <silent><unique>  gqs  :<c-u>s/\s\{2,}/ /gc<cr>
+nno  <silent><unique>  gqs  :<c-u>s/\s\{2,}/ /gc <bar> sil! call repeat#set('gqs')<cr>
 
 " Options {{{1
+" formatprg {{{2
 
-" `par` is an external formatting program, more powerful than Vim's internal
-" formatting function. The latter has several drawbacks:
+" `$ par` is more powerful than Vim's internal formatting function.
+" The latter has several drawbacks:
 "
 "     • it uses a greedy algorithm, which makes it fill a line as much as it
 "       can, without caring about the discrepancies between the lengths of
@@ -104,20 +105,20 @@ nno  <silent><unique>  gqs  :<c-u>s/\s\{2,}/ /gc<cr>
 "
 "         rTbgqR B=.,?_A_a Q=_s>|
 
-set formatprg=par\ -w80rjeq
-"                   │  ││││{{{
-"                   │  │││└── handle nested quotations, often found in the
-"                   │  │││    plain text version of an email
-"                   │  │││
-"                   │  ││└── delete (expel) superfluous lines from the output
-"                   │  ││
-"                   │  │└── justify the output so that all lines (except the last)
-"                   │  │    have the same length, by inserting spaces between words
-"                   │  │
-"                   │  └── fill empty comment lines with spaces (e.g.: /*    */)
+"                   ┌ no line bigger than 80 characters in the output paragraph{{{
 "                   │
-"                   └── no line bigger than 80 characters in the output paragraph
+"                   │  ┌ fill empty comment lines with spaces (e.g.: /*    */)
+"                   │  │
+"                   │  │┌ justify the output so that all lines (except the last)
+"                   │  ││ have the same length, by inserting spaces between words
+"                   │  ││
+"                   │  ││┌ delete (expel) superfluous lines from the output
+"                   │  │││
+"                   │  │││┌ handle nested quotations, often found in the
+"                   │  ││││ plain text version of an email}}}
+set formatprg=par\ -w80rjeq
 "}}}
+" formatoptions {{{2
 
 " 'formatoptions' / 'fo' handles the automatic formatting of text.
 "
