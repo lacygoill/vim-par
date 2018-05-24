@@ -14,21 +14,20 @@ fu! par#gq(type) abort "{{{2
         let has_a_list_header = getline(lnum1) =~# &l:flp
         let has_diagram = getline(lnum1) =~# '^\s*'.cml.'\s*[│┌]'
 
-        if has_a_list_header
+        if &l:fp isnot# $my_par_cmd
+            sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
+
+        elseif has_a_list_header
             sil exe 'norm! '.lnum1.'Ggw'.lnum2.'G'
 
         elseif has_diagram
-
+            " temporarily replace diagram characters with control characters
             sil exe printf('keepj keepp %d,%ds/[┌┐└┘]/\="│ ".%s[submatch(0)]/e', lnum1, lnum2,
             \ {'┌': "\x01", '┐': "\x02", '└': "\x03", '┘': "\x04"})
-            " FIXME:
-            " What if `&fp` has changed?
-            " Read `vim-toggle-settings`. Look for `s:formatprg(`.
-            " I don't understand this function anymore, nor the `coq` mapping.
-            "
-            " Anyway, we may need to save the  initial global value of 'fp' in a
-            " global variable.
+
+            " format the lines
             sil exe printf('%s!%s', lnum1.','.lnum2, &fp)
+
             " Why?{{{
             "
             " `gq` could have increased the number of lines, or reduced it.
@@ -36,14 +35,17 @@ fu! par#gq(type) abort "{{{2
             " original text.
             "}}}
             let lnum2 = line("']")
+            " restore diagram characters
             sil exe printf('keepj keepp %d,%ds/│ \([\x01\x02\x03\x04]\)/\=%s[submatch(1)]/e', lnum1, lnum2,
             \ {"\x01": '┌', "\x02": '┐', "\x03": '└', "\x04": '┘'})
 
         else
             " remove undesired hyphens
             call s:prepare(lnum1, lnum2, 'gq')
+
             " format the text-object
             sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
+
             " `s:prepare()` may have left some ‘C-a’s.
             sil exe lnum1.','.lnum2.'s/\%x01\s*//ge'
         endif

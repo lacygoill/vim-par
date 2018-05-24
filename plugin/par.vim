@@ -116,7 +116,9 @@ nno  <silent><unique>  gqs  :<c-u>s/\s\{2,}/ /gc <bar> sil! call repeat#set('gqs
 "                   │  │││
 "                   │  │││┌ handle nested quotations, often found in the
 "                   │  ││││ plain text version of an email}}}
-set formatprg=par\ -w80rjeq
+set fp=par\ -w80rjeq
+
+let $my_par_cmd = &fp
 "}}}
 " formatoptions {{{2
 
