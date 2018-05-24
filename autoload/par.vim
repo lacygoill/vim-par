@@ -282,23 +282,23 @@ fu! s:get_fp() abort "{{{2
 endfu
 
 fu! s:get_range(for_who, mode) abort "{{{2
-    if a:for_who is# 'gq'
-        return a:mode is# 'vis'
-        \ ?        [line("'<"), line("'>")]
-        \ :        [line("'["), line("']")]
+    if a:mode is# 'x'
+        return [line("'<"), line("'>")]
     endif
 
-    let [firstline, lastline] = a:mode is# 'n'
-    \ ?     [line("'{"), line("'}")]
-    \ :     [line("'<"), line("'>")]
+    if a:for_who is# 'gq'
+        return [line("'["), line("']")]
+    endif
+
+    let [firstline, lastline] = [line("'{"), line("'}")]
 
     " get the address of the first line
     let lnum1 = firstline ==# 1 && getline(1) =~# '\S'
     \ ?     1
     \ :     firstline + 1
 
-    " get the address of the last line of the paragraph/selection
-    let lnum2 = a:mode is# 'n' && getline(lastline) =~# '^\s*$'
+    " get the address of the last line of the paragraph
+    let lnum2 = getline(lastline) =~# '^\s*$'
     \ ?     lastline - 1
     \ :     lastline
 
