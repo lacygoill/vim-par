@@ -24,7 +24,7 @@ let g:loaded_par = 1
 nmap <unique>  <space>p                         <plug>(split-paragraph-compact)
 nno  <silent>  <plug>(split-paragraph-compact)  :<c-u>call par#split_paragraph(1, 'n')<cr>
 
-xmap <silent><unique>  <space>p      :<c-u>call par#split_paragraph(1, 'x')<cr>
+xmap <silent><unique>  <space>p  :<c-u>call par#split_paragraph(1, 'x')<cr>
 
 " SPC C-p {{{2
 
@@ -39,7 +39,7 @@ xmap <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph(0, 'x')<cr>
 "                                                      │
 "                                                      │      'sil norm <plug>(my_gq)ip'
 "                                                      │
-"                                                      │  because `:nno` doesn't translate `<plug>`.
+"                                                      │  because `:norm` needs `\<plug>`
 "                                                      │
 nno  <silent><unique>  <space>P  mz:<c-u>exe "sil norm \<plug>(my_gq)ip"
                                  \ <bar> sil update
@@ -55,7 +55,6 @@ nno  <silent><unique>  <space>P  mz:<c-u>exe "sil norm \<plug>(my_gq)ip"
 " object has a list header.
 " If it does, the wrapper should execute `gw`, otherwise `gq`.
 "}}}
-
 " Why do you create `<plug>` mappings?{{{
 "
 " We have 2 mappings which currently invoke the default `gq`:
