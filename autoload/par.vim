@@ -107,7 +107,7 @@ fu! par#gqq() abort "{{{2
     endif
 
     sil! norm! `z
-    sil! call repeat#set("\<plug>(my_gqq)", v:count1)
+    sil! call repeat#set("\<plug>(par#gqq)", v:count1)
 endfu
 
 fu! par#split_paragraph(mode, ...) abort "{{{2
