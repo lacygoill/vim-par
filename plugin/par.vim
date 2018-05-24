@@ -7,10 +7,8 @@ let g:loaded_par = 1
 " I'm not sure our mappings handle diagrams that well.
 " In particular when there're several diagram characters on a single line.
 
-" FIXME:
-" Sometimes, a superfluous space is added.
-" MWE:
-" Press `gqq` on the following line.
+" FIXME: Sometimes, a superfluous space is added.
+" MWE: Press `gqq` on the following line.
 
 " I'm not sure our mappings handle diagrams that well. In particular when there're several diagram characters on a single line.
 

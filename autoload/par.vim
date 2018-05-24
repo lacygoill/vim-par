@@ -238,7 +238,10 @@ endfu
 
 " Util {{{1
 fu! s:get_cml() abort "{{{2
-    let cml = get(split(&l:cms, '%s'), 0)
+    if &l:cms is# ''
+        return ''
+    endif
+    let cml = split(&l:cms, '%s')[0]
     return '\%(\V'.escape(cml, '\').'\m\)\='
 endfu
 
