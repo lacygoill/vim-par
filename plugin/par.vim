@@ -3,20 +3,13 @@ if exists('g:loaded_par')
 endif
 let g:loaded_par = 1
 
-" FIXME:
-" When we press `SPC p` on a commented paragraph, sometimes, the lines after the
-" first one are not commented anymore.
-" MWE:
-
-"     The quick brown fox jumps over the lazy dog.
-"     The quick brown fox jumps over the lazy dog.
-
-" TODO:
-" I'm not sure our mappings handle diagrams that well.
+" TODO: I'm not sure our mappings handle diagrams that well.
 " In particular when there're several diagram characters on a single line.
 
 " TODO:
 " Does `gqq` correctly handle a count?
+" And why do we need a `gqq()` function in the first place?
+" We should be able to use our custom `gq` operator.
 
 " TODO:
 " Make `SPC p` smarter.

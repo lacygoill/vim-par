@@ -129,6 +129,9 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
 
     let pos = getcurpos()
     try
+        let was_commented = s:is_commented()
+        let cml = get(split(&l:cms, '%s'), 0, '')
+
         call s:prepare(lnum1, lnum2, 'split_paragraph')
 
         " break the line down according to the punctuation
@@ -144,7 +147,8 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
         " For example, it may begin with a quote.
         "}}}
         let indent = matchstr(getline(lnum1), '^\s*')
-        sil exe printf('keepj keepp s/%s/\=%s/ge', pat, string("\n\n".indent))
+        let rep = "\n\n".indent
+        sil exe printf('keepj keepp s/%s/\=%s/ge', pat, string(rep))
 
         " 2 empty lines have been added (one where we are right now, and the one above);
         " remove them
@@ -160,6 +164,15 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
         " remove empty lines
         if !a:0
             sil exe printf('keepj keepp %d,%dg/^$/d_', lnum1, line('.'))
+        endif
+
+        " If the text was commented, make sure it's still commented.
+        if was_commented
+            for i in range(lnum1, line('.'))
+                if !s:is_commented(i)
+                    sil exe 'keepj keepp '.i.'CommentToggle'
+                endif
+            endfor
         endif
 
         sil update
@@ -194,10 +207,14 @@ fu! s:get_range(mode) abort "{{{2
     return [lnum1, lnum2]
 endfu
 
-fu! s:is_commented() abort "{{{2
-    return !empty(&l:cms)
-       \ ?     stridx(getline('.'), split(&l:cms, '%s')[0]) !=# -1
-       \ :     0
+fu! s:is_commented(...) abort "{{{2
+    if empty(&l:cms)
+        return 0
+    else
+    let line = getline(a:0 ? a:1 : line('.'))
+    let cml = split(&l:cms, '%s')[0]
+    return line =~# '^\s*\V'.escape(cml, '\')
+    endif
 endfu
 
 fu! s:prepare(lnum1, lnum2, cmd) abort "{{{2
