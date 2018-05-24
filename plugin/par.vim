@@ -47,15 +47,7 @@ xmap <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph('x', 'with-e
 
 " SPC P {{{2
 
-"                                                      ┌─ don't write:
-"                                                      │
-"                                                      │      'sil norm <plug>(par#gq)ip'
-"                                                      │
-"                                                      │  because `:norm` needs `\<plug>`
-"                                                      │
-nno  <silent><unique>  <space>P  mz:<c-u>exe "sil norm \<plug>(par#gq)ip"
-                                 \ <bar> sil update
-                                 \ <bar> sil! norm! `z<cr>
+nmap <unique>  <space>P  gqip
 
 " gq {{{2
 
