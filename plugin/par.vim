@@ -51,24 +51,8 @@ nmap <unique>  <space>P  gqip
 
 " gq {{{2
 
-" Purpose:{{{
-"
-" The default `gq` invokes `par` which doesn't recognize bullet lists.
-" OTOH, `gw` recognizes them thanks to 'flp'.
-" We create a wrapper around `gq`, which checks whether the 1st line of the text
-" object has a list header.
-" If it does, the wrapper should execute `gw`, otherwise `gq`.
-"}}}
-" Why do you create a `<plug>` mapping?{{{
-"
-" `SPC p` invokes the default `gq`.
-" We want it to invoke our custom wrapper, and a `<plug>` mapping is easier to use.
-"}}}
-nmap  <unique>  gq             <plug>(par#gq)
-nno   <silent>  <plug>(par#gq)  :<c-u>set opfunc=par#gq<cr>g@
-
-xmap  <unique>  gq             <plug>(par#gq)
-xno   <silent>  <plug>(par#gq)  :<c-u>call par#gq('vis')<cr>
+nno  <silent><unique>  gq  :<c-u>set opfunc=par#gq<cr>g@
+xno  <silent><unique>  gq  :<c-u>call par#gq('vis')<cr>
 
 " gqq {{{2
 
