@@ -43,7 +43,7 @@ xno <silent><unique>  <space>p  :<c-u>call par#split_paragraph('x')<cr>
 nmap <unique>  <space><c-p>                              <plug>(split-paragraph-with-empty-lines)
 nno  <silent>  <plug>(split-paragraph-with-empty-lines)  :<c-u>call par#split_paragraph('n', 'with-empty-lines')<cr>
 
-xmap <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph('x', 'with-empty-lines')<cr>
+xno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph('x', 'with-empty-lines')<cr>
 
 " SPC P {{{2
 
