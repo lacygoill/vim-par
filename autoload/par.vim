@@ -201,6 +201,15 @@ fu! s:prepare(lnum1, lnum2, cmd) abort "{{{2
     " commands (:join, gq) from operating on the wrong lines.
     "}}}
     sil exe 'keepj keepp '.range.'s/'.pat."/\<c-a>/ge"
+    "                                         │{{{
+    "                                         └ You can use `\x01` in a string:
+    "                                                echo "\x01"
+    "
+    "                                           You can use `\%x01` in a pattern:
+    "                                               /\%x01
+    "
+    "                                           But here, we're neither in a string nor in a pattern.
+    "}}}
 
     if a:cmd is# 'split_paragraph'
         " In a markdown file, we could have a leading `>` in front of quoted lines.
