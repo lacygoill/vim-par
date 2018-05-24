@@ -18,6 +18,10 @@ let g:loaded_par = 1
 "
 "     • handle correctly diagrams
 
+" TODO:
+" I'm not sure our mappings handle diagrams that well.
+" In particular when there're several diagram characters on a single line.
+
 " Mappings {{{1
 " SPC p {{{2
 
