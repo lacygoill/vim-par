@@ -11,8 +11,7 @@ let g:loaded_par = 1
 " I'm not sure our mappings handle comments with 2 parts (html, c) that well.
 
 " TODO:
-" Does `gqq` correctly handle a count?
-" And why do we need a `gqq()` function in the first place?
+" Why do we need a `gqq()` function in the first place?
 " We should be able to use our custom `gq` operator.
 
 " TODO:

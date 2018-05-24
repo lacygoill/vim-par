@@ -87,13 +87,14 @@ fu! par#gq(type) abort "{{{2
 endfu
 
 fu! par#gqq() abort "{{{2
+    let cnt = v:count1
     norm! mz
 
     let was_commented = s:is_commented()
     let orig = line('.')
 
-    " format current line
-    exe "sil norm \<plug>(my_gq)_"
+    " format `cnt` lines
+    exe "sil norm \<plug>(my_gq)".cnt.'_'
 
     " if the line was commented, and has been split into several new lines (i.e.
     " the current line address has changed)
