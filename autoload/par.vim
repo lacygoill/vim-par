@@ -156,7 +156,7 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
     " there're several diagram characters on a single line.
     "}}}
     let line = getline(lnum1)
-    let pat = '^\s*'.s:get_cml().'\s\zs\s'
+    let pat = '^\s*'.s:get_cml('without_quantifier').'\s\zs\s'
     if line =~# pat
         call setline(lnum1, substitute(line, pat, '', ''))
         sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
@@ -254,12 +254,14 @@ fu! s:prepare(lnum1, lnum2, cmd) abort "{{{2
 endfu
 
 " Util {{{1
-fu! s:get_cml() abort "{{{2
+fu! s:get_cml(...) abort "{{{2
     if &l:cms is# ''
         return ''
     endif
     let cml = split(&l:cms, '%s')[0]
-    return '\%(\V'.escape(cml, '\').'\m\)\='
+    return a:0
+    \ ?        '\V'.escape(cml, '\').'\m'
+    \ :        '\%(\V'.escape(cml, '\').'\m\)\='
 endfu
 
 fu! s:get_fp() abort "{{{2
