@@ -1,5 +1,9 @@
 " Interface {{{1
 fu! par#gq(type) abort "{{{2
+    if getline('.') =~# '^\s*$'
+        return
+    endif
+
     let ai_save = &l:ai
     try
         let [lnum1, lnum2] = s:get_range('gq', a:type)
