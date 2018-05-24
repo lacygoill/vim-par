@@ -9,7 +9,7 @@ fu! par#gq(type) abort "{{{2
                          \ ?     [line("'<"), line("'>")]
                          \ :     [line("'["), line("']")]
 
-        let cml = get(split(&l:cms, '%s'), 0, '')
+        let cml = split(&l:cms, '%s')[0]
         let cml = '\%(\V'.escape(cml, '\').'\m\)\?'
         let has_a_list_header = getline(lnum1) =~# &l:flp
         let has_diagram = getline(lnum1) =~# '^\s*'.cml.'\s*[│┌]'
@@ -131,7 +131,7 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
     let pos = getcurpos()
     try
         let was_commented = s:is_commented()
-        let cml = get(split(&l:cms, '%s'), 0, '')
+        let cml = split(&l:cms, '%s')[0]
 
         call s:prepare(lnum1, lnum2, 'split_paragraph')
 
