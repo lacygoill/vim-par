@@ -38,9 +38,8 @@ nno  <silent><unique>  <space>P  mz:<c-u>exe "sil norm \<plug>(my_gq)ip"
 
 " Why do we create `<plug>` mappings?{{{
 "
-" We have 3 mappings which currently invoke the default `gq`:
+" We have 2 mappings which currently invoke the default `gq`:
 "
-"         • gqic
 "         • gqq
 "         • <space>p
 "

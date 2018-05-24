@@ -42,6 +42,7 @@ fu! par#gq(type) abort "{{{2
         else
             " remove undesired hyphens
             call s:prepare(lnum1, lnum2, 'gq')
+            " format the text-object
             sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
             " `s:prepare()` may have left some ‘C-a’s.
             sil exe lnum1.','.lnum2.'s/\%x01\s*//ge'
