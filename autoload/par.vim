@@ -3,7 +3,7 @@ fu! par#gq(type) abort "{{{2
     let ai_save = &l:ai
     try
         let [lnum1, lnum2] = s:get_range('gq', a:type)
-        let cml = s:get_cml()
+        let cml = s:get_cml('with_equal_quantifier')
         let has_a_list_header = getline(lnum1) =~# &l:flp
         let has_diagram = getline(lnum1) =~# '^\s*'.cml.'\s*[│┌]'
 
@@ -156,7 +156,7 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
     " there're several diagram characters on a single line.
     "}}}
     let line = getline(lnum1)
-    let pat = '^\s*'.s:get_cml('without_quantifier').'\s\zs\s'
+    let pat = '^\s*'.s:get_cml().'\s\zs\s'
     if line =~# pat
         call setline(lnum1, substitute(line, pat, '', ''))
         sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
@@ -260,8 +260,8 @@ fu! s:get_cml(...) abort "{{{2
     endif
     let cml = split(&l:cms, '%s')[0]
     return a:0
-    \ ?        '\V'.escape(cml, '\').'\m'
-    \ :        '\%(\V'.escape(cml, '\').'\m\)\='
+    \ ?        '\%(\V'.escape(cml, '\').'\m\)\='
+    \ :        '\V'.escape(cml, '\').'\m'
 endfu
 
 fu! s:get_fp() abort "{{{2
@@ -306,7 +306,7 @@ fu! s:is_commented(...) abort "{{{2
         return 0
     else
         let line = getline(a:0 ? a:1 : line('.'))
-        return line =~# '^\s*'.s:get_cml('without_quantifier')
+        return line =~# '^\s*'.s:get_cml()
     endif
 endfu
 
