@@ -19,16 +19,7 @@ let g:loaded_par = 1
 "     • handle correctly diagrams
 
 " Mappings {{{1
-
-"                                                      ┌─ don't write:
-"                                                      │
-"                                                      │      'sil norm <plug>(my_gq)ip'
-"                                                      │
-"                                                      │  because `:nno` doesn't translate `<plug>`.
-"                                                      │
-nno  <silent><unique>  <space>P  mz:<c-u>exe "sil norm \<plug>(my_gq)ip"
-                                 \ <bar> sil update
-                                 \ <bar> sil! norm! `z<cr>
+" gq & friends {{{2
 
 " The default `gq` invokes `par` which doesn't recognize bullet lists.
 " OTOH, `gw` recognizes them thanks to 'flp'.
@@ -58,6 +49,11 @@ xno   <silent>  <plug>(my_gq)  :<c-u>call par#gq('vis')<cr>
 nmap <unique>  gqq              <plug>(my_gqq)
 nno  <silent>  <plug>(my_gqq)  :<c-u>call par#gqq()<cr>
 
+" remove excessive spaces
+nno  <silent><unique>  gqs  :<c-u>s/\s\{2,}/ /gc<cr>
+
+" SPC p & friends {{{2
+
 nmap <unique>  <space>p                         <plug>(split-paragraph-compact)
 nno  <silent>  <plug>(split-paragraph-compact)  :<c-u>call par#split_paragraph(1, 'n')<cr>
 
@@ -67,8 +63,15 @@ nno  <silent>  <plug>(split-paragraph)  :<c-u>call par#split_paragraph(0, 'n')<c
 xmap <silent><unique>  <space>p      :<c-u>call par#split_paragraph(1, 'x')<cr>
 xmap <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph(0, 'x')<cr>
 
-" remove excessive spaces
-nno  <silent><unique>  gqs  :<c-u>s/\s\{2,}/ /gc<cr>
+"                                                      ┌─ don't write:
+"                                                      │
+"                                                      │      'sil norm <plug>(my_gq)ip'
+"                                                      │
+"                                                      │  because `:nno` doesn't translate `<plug>`.
+"                                                      │
+nno  <silent><unique>  <space>P  mz:<c-u>exe "sil norm \<plug>(my_gq)ip"
+                                 \ <bar> sil update
+                                 \ <bar> sil! norm! `z<cr>
 
 " Options {{{1
 
