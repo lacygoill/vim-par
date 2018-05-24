@@ -40,6 +40,7 @@ fu! par#gq(type) abort "{{{2
             \ {"\<c-a>": '┌', "\<c-b>": '┐', "\<c-c>": '└', "\<c-d>": '┘'})
 
         else
+            call s:prepare(lnum1, lnum2, 'gq')
             sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
         endif
     catch
@@ -115,7 +116,7 @@ fu! par#split_paragraph(compact, mode) abort "{{{2
     endif
 
     try
-        call s:remove_hyphens_and_join(lnum1, lnum2)
+        call s:prepare(lnum1, lnum2, 'split_paragraph')
 
         " break the line down according to the punctuation
         let pat = '\C[.!?]\zs\%(\s\+[.a-z]\@!\|$\)\|:\zs\s*$'
@@ -162,33 +163,40 @@ endfu
 
 " {{{1
 " Util {{{1
-fu! s:remove_hyphens_and_join(lnum1, lnum2) abort "{{{2
+fu! s:prepare(lnum1, lnum2, cmd) abort "{{{2
     let [lnum1, lnum2] = [a:lnum1, a:lnum2]
 
     " Replace soft hyphens which we sometimes copy from a pdf.
     " They are annoying because they mess up the display of nearby characters.
     sil exe 'keepj keepp '.lnum1.','.lnum2.'s/\%u00ad/-/ge'
 
-    " Replace every hyphen breaking a word on two lines, with a ‘C-a’.
-    " Why?{{{
-    "
-    " Because we don't want them. So, we mark them now, to remove them later.
-    "}}}
-    " Ok, but why don't you remove them right now?{{{
-    "
-    " Because it could alter the range (more specifically, it could reduce `lnum2`).
-    " This would cause the next `:j` to join too many lines.
-    "}}}
-    sil exe 'keepj keepp '.lnum1.','.lnum2.'s/[\u2010-]\ze\n\s*\S\+/'."\<c-a>".'/ge'
+    " pattern describing a hyphen breaking a word on two lines
+    let pat = '[\u2010-]\ze\n\s*\S\+'
+    if a:cmd is# 'gq'
+        sil exe 'keepj keepp '.lnum1.','.lnum2.'s/'.pat.'//ge'
+    else
+        " Replace every hyphen breaking a word on two lines, with a ‘C-a’.
+        " Why?{{{
+        "
+        " Because we don't want them. So, we mark them now, to remove them later.
+        "}}}
+        " Ok, but why don't you remove them right now?{{{
+        "
+        " Because it could alter the range (more specifically, it could reduce `lnum2`).
+        " This would cause the next `:j` to join too many lines.
+        "}}}
+        sil exe 'keepj keepp '.lnum1.','.lnum2.'s/'.pat.'/'."\<c-a>".'/ge'
 
-    " In a markdown file, we could have a leading `>` in front of quoted lines.
-    " The next `:j` won't remove them. We need to do it manually, and keep only
-    " the first one.
-    sil exe 'keepj '.(lnum1+(lnum1 < lnum2 ? 1 : 0)).','.lnum2.'s/^>//e'
-    " join all the lines in a single one
-    sil exe 'keepj '.lnum1.','.lnum2.'j'
+        " In a markdown file, we could have a leading `>` in front of quoted lines.
+        " The next `:j` won't remove them. We need to do it manually, and keep only
+        " the first one.
+        " TODO: What happens if there are nested quotes?
+        sil exe 'keepj '.(lnum1+(lnum1 < lnum2 ? 1 : 0)).','.lnum2.'s/^>//e'
+        " join all the lines in a single one
+        sil exe 'keepj '.lnum1.','.lnum2.'j'
 
-    " Now that we've joined all the lines, remove every ‘C-a’.
-    sil exe "keepj keepp s/\<c-a>\\s*//ge"
+        " Now that we've joined all the lines, remove every ‘C-a’.
+        sil exe "keepj keepp s/\<c-a>\\s*//ge"
+    endif
 endfu
 

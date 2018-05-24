@@ -8,13 +8,6 @@ let g:loaded_par = 1
 " are not commented anymore.
 
 " TODO:
-"
-" Merge `par#gq()` with `par#split_paragraph()`.
-" Why?
-" Because `par#split_paragraph()` correctly deals with hyphens.
-" Not `par#gq()`. Not consistent.
-
-" TODO:
 " Make `SPC p` smarter.
 " When we press it while on some comment, it should:
 "
