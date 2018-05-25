@@ -1,5 +1,7 @@
 " Interface {{{1
 fu! par#gq(type) abort "{{{2
+    let [lnum1, lnum2] = s:get_range('gq', a:type)
+
     " If 'fp' doesn't invoke `$ par`, but something else like `$ js-beautify`,
     " we should let the external program do its job without interfering.
     if s:get_fp() !~# '^par\s'
@@ -8,7 +10,6 @@ fu! par#gq(type) abort "{{{2
     endif
 
     try
-        let [lnum1, lnum2] = s:get_range('gq', a:type)
         let cml = s:get_cml('with_equal_quantifier')
 
         if s:has_to_format_list(lnum1)
