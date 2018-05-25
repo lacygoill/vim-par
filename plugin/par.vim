@@ -4,22 +4,17 @@ endif
 let g:loaded_par = 1
 
 " TODO:
-" Try to merge `par#gq()` and `par#split_paragraph()`.
+" Should we try to merge `par#gq()` and `par#split_paragraph()`?
 " Also, shouldn't we rename the plugin `vim-format`?
-
-" TODO:
-" I'm not sure our mappings handle comments with 2 parts (html, c) that well.
 
 " TODO:
 " Make `SPC p` smarter.
 " When we press it while on some comment, it should:
 "
-"     • select the right comment
+"     • select the right comment:
 "       stop when it finds an empty commented line, or a fold
 "
 "     • ignore the code above/below
-"
-"     • handle correctly diagrams
 
 " Mappings {{{1
 " SPC p {{{2
