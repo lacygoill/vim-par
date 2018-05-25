@@ -11,19 +11,6 @@ let g:loaded_par = 1
 " I'm not sure our mappings handle comments with 2 parts (html, c) that well.
 
 " TODO:
-" I'm not sure our mappings handle diagrams that well.
-" In particular when there're several diagram characters on a single line.
-" MWE:
-" select the 3 lines of the following diagram, and press `gq`
-"
-"     ┌ some comment
-"     │                     ┌ some comment
-"     │                     │
-" the quick brown fox jumps over the lazy dog
-"
-" Not only the formatting is wrong, but a `C-b` has not been removed.
-
-" TODO:
 " Make `SPC p` smarter.
 " When we press it while on some comment, it should:
 "

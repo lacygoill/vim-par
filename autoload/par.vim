@@ -11,14 +11,21 @@ fu! par#gq(type) abort "{{{2
         let [lnum1, lnum2] = s:get_range('gq', a:type)
         let cml = s:get_cml('with_equal_quantifier')
 
-        if s:has_to_format_a_list(lnum1)
+        if s:has_to_format_list(lnum1)
             call s:format_list(lnum1, lnum2)
-
-        elseif getline(lnum1) =~# '^\s*'.cml.'\s*[│┌]'
-            call s:gq_in_diagram(lnum1, lnum2)
-
         else
-            call s:gq(lnum1, lnum2)
+            let kind_of_text = s:get_kind_of_text(lnum1, lnum2)
+            if kind_of_text is# 'mixed'
+                echo 'can''t format a mix of diagram and regular lines'
+            elseif kind_of_text is# 'diagram'
+                if search('\s[┐┘]', 'nW', lnum2)
+                    echo 'can''t format a diagram with branches on the right'
+                    return
+                endif
+                call s:gq_in_diagram(lnum1, lnum2)
+            else
+                call s:gq(lnum1, lnum2)
+            endif
         endif
     catch
         return lg#catch_error()
@@ -34,7 +41,7 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
     try
         let [lnum1, lnum2] = s:get_range('split-paragraph', a:mode)
 
-        if s:has_to_format_a_list(lnum1)
+        if s:has_to_format_list(lnum1)
             call s:format_list(lnum1, lnum2)
             return
         endif
@@ -160,24 +167,108 @@ endfu
 
 fu! s:gq_in_diagram(lnum1, lnum2) abort "{{{2
     let [lnum1, lnum2] = [a:lnum1, a:lnum2]
+    let cml = s:get_cml('with_equal_quantifier')
+    let pos = getcurpos()
+
+    " Make sure 2 consecutive branches of a diagram are separated by an empty line:{{{
+    "
+    " Otherwise, if you have sth like this:
+    "
+    "     │ some long comment
+    "     │         ┌ some long comment
+    "
+    " The formatting won't work as expected.
+    " We need to make sure that all branches are separated:
+    "
+    "     │ some long comment
+    "     │
+    "     │         ┌ some long comment
+    "}}}
+    let g = 0
+    while search('[┌└]', 'W') && g < 100
+        let l = line('.')
+        " if the previous line is not an empty diagram line
+        if getline(l-1) !~# '^\s*'.cml.'\s*│\s*$' && l <= lnum2 && l > lnum1
+            " put one above
+            let line = getline(l)
+            let line = substitute(line, '\s*┌.*', '', '')
+            let line = substitute(line, '└\zs.*', '', '')
+            let line = substitute(line, '└$', '│', '')
+            call append(l-1, line)
+            let lnum2 += 1
+        endif
+        let g += 1
+    endwhile
+
+    " For lower diagrams, we need to put a bar in front of every line which has no diagram character:{{{
+    "
+    "     └ some comment
+    "       some comment
+    "       some comment
+    " →
+    "     └ some comment
+    "     | some comment
+    "     | some comment
+    "}}}
+    call setpos('.', pos)
+    let g = 0
+    while search('└', 'W', lnum2)
+     \ && g <= 100
+        if s:get_char_above() !~# '[│├┤]'
+            continue
+        endif
+        let pos_ = getcurpos()
+        let i = 1
+        let g_ = 0
+        while s:get_char_below() is# ' '
+         \ && s:get_char_after() is# ' '
+         \ && g_ <= 100
+            exe 'norm! jr|'
+            let i += 1
+            let g_ += 1
+        endwhile
+        let g += 1
+        call setpos('.', pos_)
+    endwhile
 
     " temporarily replace diagram characters with control characters
-    sil exe printf('keepj keepp %d,%ds/[┌┐└┘]/\="│ ".%s[submatch(0)]/e', lnum1, lnum2,
-    \ {'┌': "\x01", '┐': "\x02", '└': "\x03", '┘': "\x04"})
+    sil exe printf('keepj keepp %d,%ds/[┌└]/\="│ ".%s[submatch(0)]/e', lnum1, lnum2,
+    \ {'┌': "\x01", '└': "\x02"})
+    sil exe printf('keepj keepp %d,%ds/│/|/ge', lnum1, lnum2)
 
     " format the lines
     sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
 
-    " Why?{{{
+    " `gq` could have increased the number of lines, or reduced it.{{{
     "
-    " `gq` could have increased the number of lines, or reduced it.
     " There's no  guarantee that  `lnum2` still matches  the end  of the
     " original text.
     "}}}
     let lnum2 = line("']")
+
     " restore diagram characters
-    sil exe printf('keepj keepp %d,%ds/│ \([\x01\x02\x03\x04]\)/\=%s[submatch(1)]/e', lnum1, lnum2,
-    \ {"\x01": '┌', "\x02": '┐', "\x03": '└', "\x04": '┘'})
+    sil exe printf('keepj keepp %d,%ds/| \([\x01\x02]\)/\=%s[submatch(1)]/ge', lnum1, lnum2,
+    \ {"\x01": '┌', "\x02": '└'})
+    " pattern describing a bar preceded by only spaces or other bars
+    let pat = '\%(^\s*'.cml.'[ |]*\)\@<=|'
+    sil exe printf('keepj keepp %d,%ds/%s/│/ge', lnum1, lnum2, pat)
+
+    " For lower diagrams, there will be an undesired `│` below every `└`.
+    " We need to remove them.
+    call setpos('.', pos)
+    let g = 0
+    while search('└', 'W', lnum2) && g <= 100
+        let i = 1
+        let g_ = 0
+        while s:get_char_below() =~# '[│|]' && g_ <= 100
+            exe 'norm! jr '
+            let i += 1
+            let g_ += 1
+        endwhile
+        let g += 1
+    endwhile
+
+    call setpos('.', pos)
 endfu
 
 fu! s:format_list(lnum1, lnum2) abort "{{{2
@@ -211,12 +302,11 @@ fu! s:remove_hyphens(lnum1, lnum2, cmd) abort "{{{2
 
     " pattern describing a hyphen breaking a word on two lines
     let pat = '[\u2010-]\ze\n\s*\S\+'
-    " Replace every hyphen breaking a word on two lines, with a ‘C-a’.
-    " Why?{{{
+    " Replace every hyphen breaking a word on two lines, with a ‘C-a’.{{{
     "
-    " Because we don't want them. So, we mark them now, to remove them later.
+    " We don't want them. So, we mark them now, to remove them later.
     "}}}
-    " Ok, but why don't you remove them right now?{{{
+    " Why don't you remove them right now?{{{
     "
     " We need to also remove the spaces which may come after on the next line.
     " Otherwise, a word like:
@@ -262,6 +352,20 @@ fu! s:remove_hyphens(lnum1, lnum2, cmd) abort "{{{2
 endfu
 
 " Util {{{1
+fu! s:get_char_above() abort "{{{2
+    " `virtcol()` may  not be  totally reliable,  but it  should be  good enough
+    " here, because the lines we format should not be too long.
+    return matchstr(getline(line('.')-1), '\%'.virtcol('.').'v.')
+endfu
+
+fu! s:get_char_after() abort "{{{2
+    return matchstr(getline('.'), '\%'.col('.').'c.\zs.')
+endfu
+
+fu! s:get_char_below() abort "{{{2
+    return matchstr(getline(line('.')+1), '\%'.virtcol('.').'v.')
+endfu
+
 fu! s:get_cml(...) abort "{{{2
     if &l:cms is# ''
         return ''
@@ -278,9 +382,57 @@ fu! s:get_fp() abort "{{{2
     \ :        &l:fp
 endfu
 
+fu! s:get_kind_of_text(lnum1, lnum2) abort "{{{2
+    let kind = getline(a:lnum1) =~# '[│┌└]'
+    \ ?            'diagram'
+    \ :            'normal'
+
+    if a:lnum2 ==# a:lnum1
+        return kind
+    endif
+
+    for i in range(a:lnum1+1, a:lnum2)
+        if getline(i) =~# '[│┌└]' && kind is# 'normal'
+        \ || getline(i) !~# '[│┌└]' && kind is# 'diagram'
+            return 'mixed'
+        endif
+    endfor
+    return kind
+endfu
+
 fu! s:get_range(for_who, mode) abort "{{{2
     if a:mode is# 'x'
-        return [line("'<"), line("'>")]
+        let [lnum1, lnum2] = [line("'<"), line("'>")]
+        " Why not returning the previous addresses directly?{{{
+        "
+        " If we select  a diagram, we should exclude the  first/last line, if it
+        " looks like this:
+        "
+        "     │    │
+        "
+        " Otherwise,  `$ par` will remove  this line, which makes  the diagram a
+        " little ugly.
+        "
+        " And, if the first/last line looks like:
+        "
+        "     ┌──┤    ┌──┤
+        "
+        " The formatting is wrong.
+        " So, in both cases, we should ignore those lines.
+        "}}}
+        let cml = s:get_cml('with_equal_quantifier')
+        let pat = '^\s*'.cml.'\%(\s*│\)\+\s*$'
+        if getline(lnum1) =~# pat
+            let lnum1 += 1
+        elseif getline(lnum2) =~# pat
+            let lnum2 -= 1
+        elseif getline(lnum2) =~# '[├┤]'
+            let lnum2 -= 1
+        elseif getline(lnum1) =~# '[├┤]'
+            let lnum1 += 1
+        endif
+
+        return [lnum1, lnum2]
     endif
 
     if a:for_who is# 'gq'
@@ -302,7 +454,7 @@ fu! s:get_range(for_who, mode) abort "{{{2
     return [lnum1, lnum2]
 endfu
 
-fu! s:has_to_format_a_list(lnum1) abort "{{{2
+fu! s:has_to_format_list(lnum1) abort "{{{2
     " Format sth like this:
     "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
     "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
