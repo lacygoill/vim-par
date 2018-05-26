@@ -119,14 +119,14 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
     "
     " In a markdown file, if we stumble upon a reference link:
     "
-    "     [some description][ref]
+    "     [some description][id]
     "
     " And if  the description, or the  reference, contains some spaces,  `$ par`
     " may break the link on two lines.
     " We don't want that.
     " So, we temporarily replace them with ‘C-b’.
     "}}}
-    sil exe 'keepj keepp '.lnum1.','.lnum2.'s/\[\_.\{-}\]\[\_.\{-}\]/\=substitute(submatch(0), " ", "\<c-b>", "g")/ge'
+    sil exe 'keepj keepp '.lnum1.','.lnum2.'s/\[\_.\{-}\]\[\d\+\]/\=substitute(submatch(0), " ", "\<c-b>", "g")/ge'
 
     " format the text-object
     sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
@@ -152,7 +152,7 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
 
     " If  the original  text had  a reference  link with  spaces, replace  every
     " possible ‘C-b’ with a space.
-    sil exe 'keepj keepp '.lnum1.','.lnum2.'s/\[\_.\{-}\]\[\_.\{-}\]/\=substitute(submatch(0), "\<c-b>", " ", "g")/ge'
+    sil exe 'keepj keepp '.lnum1.','.lnum2.'s/\[\_.\{-}\]\[\d\+\]/\=substitute(submatch(0), "\<c-b>", " ", "g")/ge'
 
     " If the text was commented, make sure it's still commented.
     " Necessary if  we've pressed `gqq`  on a long commented  line which
