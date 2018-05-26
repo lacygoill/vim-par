@@ -139,7 +139,7 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
     "
     " Since we may have altered the  text after removing some ‘C-a’s, we
     " need  to re-format  it, to  be  sure that  `gq` has  done its  job
-    " correctly, and that the operation is omnipotent.
+    " correctly, and that the operation is idempotent.
     "
     " Had we removed the hyphens before invoking `gq`, we would not need
     " to re-format.
