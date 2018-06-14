@@ -59,11 +59,11 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
         call s:remove_hyphens(lnum1, lnum2, 'split_paragraph')
 
         " break the line down according to the punctuation
-        let pat = '\C[.!?]\zs\%(\s\+[.a-z]\@!\|$\)\|:\zs\s*$'
-        "                            ││
-        "                            │└ don't break something like`i.e.`
-        "                            │
-        "                            └ don't break something like `...`
+        "            ┌ don't break after `e.g.`, `i.e.`, ...
+        "            ├───────────┐
+        let pat = '\C\%([a-z]\.[a-z]\)\@<![.!?]\zs\%(\s\+[.]\@!\|$\)\|:\zs\s*$'
+        "                                                 │
+        "                                                 └ don't break something like `...`
 
         " Why [.a-z]\@! instead of \u (uppercase character)?{{{
         "
