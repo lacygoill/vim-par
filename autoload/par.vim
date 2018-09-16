@@ -47,11 +47,12 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
             return
         endif
 
+        let remove_final_dot = 0
         " The last character of the paragraph needs to be a valid punctuation ending
         " for a sentence. Otherwise, our function could wrongly delete some lines.
         if getline(lnum2) =~# '\s*[^.!?:]$'
-            echo 'last char is not a valid punctuation ending for a sentence'
-            return
+            let remove_final_dot = 1
+            call setline(lnum2, getline(lnum2).'.')
         endif
 
         let was_commented = s:is_commented()
@@ -89,6 +90,12 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
         " If the text was commented, make sure it's still commented.
         if was_commented
             call s:make_sure_properly_commented(lnum1, lnum2)
+        endif
+
+        " don't move this block after the one removing empty lines,
+        " because removing lines will affect `lnum2`
+        if remove_final_dot
+            call setline(lnum2, substitute(getline(lnum2), '\.$', '', ''))
         endif
 
         " remove empty lines
