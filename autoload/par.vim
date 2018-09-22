@@ -140,7 +140,7 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
     let lnum2 = line("']")
 
     " `s:remove_hyphens()` may have left some ‘C-a’s
-    sil exe lnum1.','.lnum2.'keepj keepp s/\%x01\s*//ge'
+    sil exe 'keepj keepp '.lnum1.','.lnum2.'s/\%x01\s*//ge'
 
     " Why?{{{
     "
