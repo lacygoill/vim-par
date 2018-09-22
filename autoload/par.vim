@@ -140,7 +140,7 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
     let lnum2 = line("']")
 
     " `s:remove_hyphens()` may have left some ‘C-a’s
-    sil exe lnum1.','.lnum2.'s/\%x01\s*//ge'
+    sil exe lnum1.','.lnum2.'keepj keepp s/\%x01\s*//ge'
 
     " Why?{{{
     "
@@ -366,7 +366,7 @@ fu! s:remove_hyphens(lnum1, lnum2, cmd) abort "{{{2
         " The next `:j` won't remove them. We need to do it manually, and keep only
         " the first one.
         " TODO: What happens if there are nested quotes?
-        sil exe 'keepj '.(lnum1+(lnum1 < lnum2 ? 1 : 0)).','.lnum2.'s/^>//e'
+        sil exe 'keepj keepp'.(lnum1+(lnum1 < lnum2 ? 1 : 0)).','.lnum2.'s/^>//e'
 
         " join all the lines in a single one
         sil exe 'keepj '.range.'j'
