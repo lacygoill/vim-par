@@ -33,6 +33,10 @@ fu! par#gq(type) abort "{{{2
     endtry
 endfu
 
+fu! par#remove_duplicate_spaces(type) abort "{{{2
+    s/\s\{2,}/ /gc
+endfu
+
 fu! par#split_paragraph(mode, ...) abort "{{{2
     if getline('.') =~# '^\s*$'
         return
@@ -40,7 +44,7 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
 
     let pos = getcurpos()
     try
-        let [lnum1, lnum2] = s:get_range('split-paragraph', a:mode)
+        let [lnum1, lnum2] = s:get_range('split-paragraph', s:split_paragraph_mode)
 
         if s:has_to_format_list(lnum1)
             call s:format_list(lnum1, lnum2)
@@ -85,6 +89,13 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
 
         " format each non-empty line with our custom `gq`
         sil exe printf('keepj keepp %d,%dg/\S/norm gq_', lnum1, line('.'))
+        " Why?{{{
+        "
+        " We've just invoked our custom operator `gq`.
+        " As a result, the value of 'opfunc'  has been altered, which will be an
+        " issue if we try to repeat this edit with the dot command.
+        "}}}
+        set opfunc=par#split_paragraph
         let lnum2 = line("']")
 
         " If the text was commented, make sure it's still commented.
@@ -99,13 +110,8 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
         endif
 
         " remove empty lines
-        if !a:0
+        if !s:split_paragraph_with_empty_lines
             sil exe printf('keepj keepp %d,%dg/^$/d_', lnum1, lnum2)
-        endif
-
-        " make the mapping repeatable
-        if a:mode is# 'n'
-            sil! call repeat#set("\<plug>(split-paragraph".(a:0 ? '-with-empty-lines)' : ')'))
         endif
     catch
         return lg#catch_error()
@@ -493,5 +499,10 @@ fu! s:is_commented(...) abort "{{{2
         let line = getline(a:0 ? a:1 : line('.'))
         return line =~# '^\s*'.s:get_cml()
     endif
+endfu
+
+fu! par#split_paragraph_save_param(mode, with_empty_lines) abort "{{{2
+    let s:split_paragraph_mode = a:mode
+    let s:split_paragraph_with_empty_lines = a:with_empty_lines
 endfu
 

@@ -19,17 +19,12 @@ let g:loaded_par = 1
 " Mappings {{{1
 " SPC p {{{2
 
-nmap <unique>  <space>p                 <plug>(split-paragraph)
-nno  <silent>  <plug>(split-paragraph)  :<c-u>call par#split_paragraph('n')<cr>
-
-xno <silent><unique>  <space>p  :<c-u>call par#split_paragraph('x')<cr>
-
+nno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('n', 0)<bar>set opfunc=par#split_paragraph<cr>g@_
+xno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('x', 0)<bar>set opfunc=par#split_paragraph<cr>g@_
 " SPC C-p {{{2
 
-nmap <unique>  <space><c-p>                              <plug>(split-paragraph-with-empty-lines)
-nno  <silent>  <plug>(split-paragraph-with-empty-lines)  :<c-u>call par#split_paragraph('n', 'with-empty-lines')<cr>
-
-xno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph('x', 'with-empty-lines')<cr>
+nno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('n', 1)<bar>set opfunc=par#split_paragraph<cr>g@_
+xno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('x', 1)<bar>set opfunc=par#split_paragraph<cr>g@_
 
 " SPC P {{{2
 
@@ -46,8 +41,7 @@ nmap <silent><unique>  gqq  gq_
 
 " gqs {{{2
 
-" remove excessive spaces
-nno  <silent><unique>  gqs  :<c-u>s/\s\{2,}/ /gc <bar> sil! call repeat#set('gqs')<cr>
+nno  <silent><unique>  gqs  :<c-u>set opfunc=par#remove_duplicate_spaces<cr>g@_
 
 " Options {{{1
 " formatprg {{{2
