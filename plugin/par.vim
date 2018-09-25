@@ -35,6 +35,29 @@ nmap <unique>  <space>P  gqip
 nno  <silent><unique>  gq  :<c-u>set opfunc=par#gq<cr>g@
 xno  <silent><unique>  gq  :<c-u>call par#gq('x')<cr>
 
+" What do you need this command for?{{{
+"
+" In `par#split_paragraph()`, we need to format some lines with our custom `gq`.
+" We could do it with:
+"
+"         norm gq_
+"
+" However, this would have the side effect of resetting 'opfunc'.
+" We would need to restore the option right after.
+"
+" And even then, if some day  we changed the name of `par#split_paragraph()`, we
+" would need to remember to change it when we restore 'opfunc' too.
+"}}}
+" Do NOT give this attribute `-range=%`?{{{
+"
+" We need to execute `:ParGq` on some lines, each one at a time.
+"
+"     sil exe printf('keepj keepp %d,%dg/\S/ParGq', lnum1, line('.'))
+"                                           ^
+"                                           no range = current line
+"}}}
+com! -bar -range ParGq call par#gq('Ex', <line1>, <line2>)
+
 " gqq {{{2
 
 nmap <silent><unique>  gqq  gq_

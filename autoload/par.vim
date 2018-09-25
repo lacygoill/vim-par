@@ -1,6 +1,8 @@
 " Interface {{{1
-fu! par#gq(type) abort "{{{2
-    let [lnum1, lnum2] = s:get_range('gq', a:type)
+fu! par#gq(type, ...) abort "{{{2
+    let [lnum1, lnum2] = a:0
+            \ ? [a:1, a:2]
+            \ : s:get_range('gq', a:type)
 
     " If 'fp' doesn't invoke `$ par`, but something else like `$ js-beautify`,
     " we should let the external program do its job without interfering.
@@ -88,14 +90,7 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
         sil keepj keepp -,g/^\s*$/d_
 
         " format each non-empty line with our custom `gq`
-        sil exe printf('keepj keepp %d,%dg/\S/norm gq_', lnum1, line('.'))
-        " Why?{{{
-        "
-        " We've just invoked our custom operator `gq`.
-        " As a result, the value of 'opfunc'  has been altered, which will be an
-        " issue if we try to repeat this edit with the dot command.
-        "}}}
-        set opfunc=par#split_paragraph
+        sil exe printf('keepj keepp %d,%dg/\S/ParGq', lnum1, line('.'))
         let lnum2 = line("']")
 
         " If the text was commented, make sure it's still commented.
