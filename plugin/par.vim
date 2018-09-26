@@ -23,14 +23,20 @@ let g:loaded_par = 1
 "
 " No.
 " You can use both, it won't make a difference.
-" In both cases, '[ and '] will refer to the current line.
+" In both  cases, '[  and ']  will refer to  the current  line, since  you don't
+" prefix `g@` with `v:count1`.
 "
 " The only  difference will  be in  the columns, but  your function  operates on
 " whole lines; it doesn't care about columns.
 "
-" You would need `g@_`, if you wrote sth like:
+" You may have needed `g@_`, if you had written sth like:
 "
 "     exe 'norm! '.v:count1.'g@_'
+"
+" Note that `par#gq()` calls `s:get_range('gq')`.
+" The latter refers to the marks '[  and '].
+" So any operator invoking `par#gq()` needs `g@_`.
+" But `par#gq()` is NOT `par#split_paragraph()`.
 "}}}
 nno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('n', 0)<bar>set opfunc=par#split_paragraph<cr>g@l
 xno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('x', 0)<bar>set opfunc=par#split_paragraph<cr>g@l
