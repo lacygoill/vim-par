@@ -36,7 +36,8 @@ fu! par#gq(type, ...) abort "{{{2
 endfu
 
 fu! par#remove_duplicate_spaces(type) abort "{{{2
-    s/\s\{2,}/ /gc
+    let range = line("'[").','.line("']")
+    exe 'keepj keepp '.range.'s/\s\{2,}/ /gc'
 endfu
 
 fu! par#split_paragraph(mode, ...) abort "{{{2

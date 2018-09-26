@@ -19,12 +19,12 @@ let g:loaded_par = 1
 " Mappings {{{1
 " SPC p {{{2
 
-nno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('n', 0)<bar>set opfunc=par#split_paragraph<cr>g@_
-xno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('x', 0)<bar>set opfunc=par#split_paragraph<cr>g@_
+nno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('n', 0)<bar>set opfunc=par#split_paragraph<cr>g@l
+xno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('x', 0)<bar>set opfunc=par#split_paragraph<cr>g@l
 " SPC C-p {{{2
 
-nno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('n', 1)<bar>set opfunc=par#split_paragraph<cr>g@_
-xno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('x', 1)<bar>set opfunc=par#split_paragraph<cr>g@_
+nno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('n', 1)<bar>set opfunc=par#split_paragraph<cr>g@l
+xno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('x', 1)<bar>set opfunc=par#split_paragraph<cr>g@l
 
 " SPC P {{{2
 
@@ -64,7 +64,18 @@ nmap <silent><unique>  gqq  gq_
 
 " gqs {{{2
 
-nno  <silent><unique>  gqs  :<c-u>set opfunc=par#remove_duplicate_spaces<cr>g@_
+" Why `feedkeys()` instead of `:norm!`?{{{
+"
+" Our operator function will execute `:s` with the `c` (confirmation) flag.
+" This is an unfinished command: it requires our input to finish.
+" Because of this, `:norm` would abort.
+" From `:h :norm`:
+"
+"     {commands} should be a complete command.  If
+"     {commands} does not finish a command, the last one
+"     will be aborted as if <Esc> or <C-C> was typed.
+"}}}
+nno  <silent><unique>  gqs  :<c-u>set opfunc=par#remove_duplicate_spaces<bar>call feedkeys(v:count1.'g@_', 'int')<cr>
 
 " Options {{{1
 " formatprg {{{2
