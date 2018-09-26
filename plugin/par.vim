@@ -19,8 +19,22 @@ let g:loaded_par = 1
 " Mappings {{{1
 " SPC p {{{2
 
+" Don't we need `g@_` instead of `g@l`?{{{
+"
+" No.
+" You can use both, it won't make a difference.
+" In both cases, '[ and '] will refer to the current line.
+"
+" The only  difference will  be in  the columns, but  your function  operates on
+" whole lines; it doesn't care about columns.
+"
+" You would need `g@_`, if you wrote sth like:
+"
+"     exe 'norm! '.v:count1.'g@_'
+"}}}
 nno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('n', 0)<bar>set opfunc=par#split_paragraph<cr>g@l
 xno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('x', 0)<bar>set opfunc=par#split_paragraph<cr>g@l
+
 " SPC C-p {{{2
 
 nno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('n', 1)<bar>set opfunc=par#split_paragraph<cr>g@l
