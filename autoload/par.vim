@@ -68,10 +68,10 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
 
         " break the line down according to the punctuation
         "            ┌ don't break after `e.g.`, `i.e.`, ...
-        "            ├───────────┐
-        let pat = '\C\%([a-z]\.[a-z]\)\@<![.!?]\zs\%(\s\+[.]\@!\|$\)\|:\zs\s*$'
-        "                                                 │
-        "                                                 └ don't break something like `...`
+        "            ├──────────────┐
+        let pat = '\C\%([a-z][.][a-z]\|[.][.]\)\@<![.!?]\zs\%(\s\+\|$\)\|:\zs\s*$'
+        "                              ├────┘
+        "                              └ don't break something like `...`
 
         " Why [.a-z]\@! instead of \u (uppercase character)?{{{
         "
