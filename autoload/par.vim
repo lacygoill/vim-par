@@ -37,7 +37,7 @@ endfu
 
 fu! par#remove_duplicate_spaces(type) abort "{{{2
     let range = line("'[").','.line("']")
-    exe 'keepj keepp '.range.'s/\s\{2,}/ /gc'
+    exe 'keepj keepp '.range.'s/\s\{2,}/ /gce'
 endfu
 
 fu! par#split_paragraph(mode, ...) abort "{{{2
