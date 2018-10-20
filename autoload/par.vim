@@ -73,6 +73,7 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
         "                              ├────┘
         "                              └ don't break something like `...`
 
+        let changedtick = b:changedtick
         " Why [.a-z]\@! instead of \u (uppercase character)?{{{
         "
         " A sentence doesn't always begin with an uppercase character.
@@ -82,13 +83,16 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
         let rep = "\n\n".indent
         sil exe printf('keepj keepp s/%s/\=%s/ge', pat, string(rep))
 
-        " 2 empty lines have been added (one where we are right now, and the one above);
-        " remove them
-        " Why using a global command?{{{
-        "
-        " To be sure we're deleting empty lines.
-        "}}}
-        sil keepj keepp -,g/^\s*$/d_
+        if b:changedtick != changedtick
+            " If the previous command has changed/split the paragraph, two empty
+            " lines have  probably been added (one  where we are right  now, and
+            " the one above). Remove them.
+            " Why using a global command?{{{
+            "
+            " To be sure we're deleting empty lines.
+            "}}}
+            sil keepj keepp -,g/^\s*$/d_
+        endif
 
         " format each non-empty line with our custom `gq`
         sil exe printf('keepj keepp %d,%dg/\S/ParGq', lnum1, line('.'))
