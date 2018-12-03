@@ -67,10 +67,10 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
         call s:remove_hyphens(lnum1, lnum2, 'split_paragraph')
 
         " break the line down according to the punctuation
-        let pat = '\C\%([a-z][.][a-z]\|etc\|[.][.]\)\@<![.!?]\zs\%(\s\+\|$\)\|:\zs\s*$'
-        "            ├──────────────┘  ├─┘  ├────┘{{{
-        "            │                 │    └ don't break something like `...`
-        "            │                 └ don't break after `etc.`
+        let pat = '\C\%([a-z][.][a-z]\|etc\|resp\|[.][.]\)\@<![.!?]\zs\%(\s\+\|$\)\|:\zs\s*$'
+        "            ├──────────────┘  ├───────┘  ├────┘{{{
+        "            │                 │          └ don't break something like `...`
+        "            │                 └ don't break after `etc.` or `resp.`
         "            └ don't break after `e.g.`, `i.e.`, ...
         "}}}
 
