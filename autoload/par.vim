@@ -120,7 +120,7 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
         call setpos('.', pos)
     endtry
 endfu
-
+" }}}1
 " Core {{{1
 fu! s:gq(lnum1, lnum2) abort "{{{2
     let [lnum1, lnum2] = [a:lnum1, a:lnum2]
@@ -382,7 +382,7 @@ fu! s:remove_hyphens(lnum1, lnum2, cmd) abort "{{{2
         sil keepj keepp s/\%x01\s*//ge
     endif
 endfu
-
+" }}}1
 " Util {{{1
 fu! s:get_char_above() abort "{{{2
     " `virtcol()` may  not be  totally reliable,  but it  should be  good enough
