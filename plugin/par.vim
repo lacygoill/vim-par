@@ -145,6 +145,35 @@ set fp=par\ -w80rjeq
 " ... don't break the line automatically
 set fo=l
 
+" Requires this patch:{{{
+"
+"     https://github.com/vim/vim/releases/tag/v8.1.0728
+"
+" Which is not merged yet in Neovim.
+"}}}
+if !has('nvim')
+    " Don't break lines at single spaces that follow periods.{{{
+    "
+    " This is  intended to complement  'joinspaces' and |cpo-J|, for  prose with
+    " sentences separated by two spaces.
+    "
+    " Example:
+    "
+    "     $ echo 'Surely you are joking, Mr. Feynman!' >/tmp/file
+    "
+    "     $ vim -Nu NONE +'set tw=28' /tmp/file
+    "     gw$
+    "     Surely you are joking, Mr.~
+    "     Feynman!~
+    "
+    "     $ vim -Nu NONE +'set tw=28 fo+=p' /tmp/file
+    "     gw$
+    "     Surely you are joking,~
+    "     Mr. Feynman!~
+    "}}}
+    set fo+=p
+endif
+
 "       ┌─ insert comment leader after hitting o O in normal mode, from a commented line
 "       │┌─ same thing when we hit Enter in insert mode
 "       ││
