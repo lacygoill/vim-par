@@ -11,10 +11,10 @@ let g:loaded_par = 1
 " Make `SPC p` smarter.
 " When we press it while on some comment, it should:
 "
-"     • select the right comment:
+"     - select the right comment:
 "       stop when it finds an empty commented line, or a fold
 "
-"     • ignore the code above/below
+"     - ignore the code above/below
 
 " Mappings {{{1
 " SPC p {{{2
@@ -103,11 +103,11 @@ nno  <silent><unique>  gqs  :<c-u>set opfunc=par#remove_duplicate_spaces<bar>cal
 " `$ par` is more powerful than Vim's internal formatting function.
 " The latter has several drawbacks:
 "
-"     • it uses a greedy algorithm, which makes it fill a line as much as it
+"     - it uses a greedy algorithm, which makes it fill a line as much as it
 "       can, without caring about the discrepancies between the lengths of
 "       several lines in a paragraph
 "
-"     • it doesn't handle well multi-line comments, (like /* */)
+"     - it doesn't handle well multi-line comments, (like /* */)
 "
 " So, when hitting `gq`, we want `par` to be invoked.
 

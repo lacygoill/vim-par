@@ -488,8 +488,8 @@ endfu
 
 fu! s:has_to_format_list(lnum1) abort "{{{2
     " Format sth like this:
-    "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
-    "     • the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
+    "     - the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
+    "     - the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
     return getline(a:lnum1) =~# &l:flp && s:get_fp() =~# '^par\s'
 endfu
 
