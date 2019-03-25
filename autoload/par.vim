@@ -37,6 +37,7 @@ endfu
 
 fu! par#remove_duplicate_spaces(type) abort "{{{2
     let range = line("'[").','.line("']")
+    exe range.'RemoveTabs'
     exe 'keepj keepp '.range.'s/\s\{2,}/ /gce'
 endfu
 
