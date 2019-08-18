@@ -11,10 +11,10 @@ let g:loaded_par = 1
 " Make `SPC p` smarter.
 " When we press it while on some comment, it should:
 "
-"     - select the right comment:
-"       stop when it finds an empty commented line, or a fold
+"    - select the right comment:
+"      stop when it finds an empty commented line, or a fold
 "
-"     - ignore the code above/below
+"    - ignore the code above/below
 
 " Mappings {{{1
 " SPC p {{{2
@@ -91,9 +91,8 @@ nmap <silent><unique>  gqq  gq_
 " Because of this, `:norm` would abort.
 " From `:h :norm`:
 "
-"     {commands} should be a complete command.  If
-"     {commands} does not finish a command, the last one
-"     will be aborted as if <Esc> or <C-C> was typed.
+" > {commands} should  be a complete command.   If {commands} does not  finish a
+" > command, the last one will be aborted as if <Esc> or <C-C> was typed.
 "}}}
 nno  <silent><unique>  gqs  :<c-u>set opfunc=par#remove_duplicate_spaces<bar>call feedkeys(v:count1.'g@_', 'in')<cr>
 " }}}1
@@ -103,18 +102,18 @@ nno  <silent><unique>  gqs  :<c-u>set opfunc=par#remove_duplicate_spaces<bar>cal
 " `$ par` is more powerful than Vim's internal formatting function.
 " The latter has several drawbacks:
 "
-"     - it uses a greedy algorithm, which makes it fill a line as much as it
-"       can, without caring about the discrepancies between the lengths of
-"       several lines in a paragraph
+"    - it uses a greedy algorithm, which makes it fill a line as much as it
+"      can, without caring about the discrepancies between the lengths of
+"      several lines in a paragraph
 "
-"     - it doesn't handle well multi-line comments, (like /* */)
+"    - it doesn't handle well multi-line comments, (like /* */)
 "
 " So, when hitting `gq`, we want `par` to be invoked.
 
 " By default, `par` reads the environment  variable `PARINIT` to set some of its
 " options.  Its current value is set in `~/.shrc` like this:
 "
-"         rTbgqR B=.,?_A_a Q=_s>|
+"     rTbgqR B=.,?_A_a Q=_s>|
 
 "            ┌ no line bigger than 80 characters in the output paragraph{{{
 "            │
@@ -138,25 +137,25 @@ set fp=par\ -w80rjeq
 " automatically), and Text (using textwidth).
 
 " If:
-"     1. we're in normal mode, on a line longer than `&l:tw`
-"     2. we switch to insert mode
-"     3. we insert something at the end
+"    1. we're in normal mode, on a line longer than `&l:tw`
+"    2. we switch to insert mode
+"    3. we insert something at the end
 "
 " ... don't break the line automatically
 set fo=l
 
-"       ┌─ insert comment leader after hitting o O in normal mode, from a commented line
-"       │┌─ same thing when we hit Enter in insert mode
+"       ┌ insert comment leader after hitting o O in normal mode, from a commented line
+"       │┌ same thing when we hit Enter in insert mode
 "       ││
 set fo+=or
 
-"       ┌─ don't break a line after a one-letter word
-"       │┌─ where it makes sense, remove a comment leader when joining lines
+"       ┌ don't break a line after a one-letter word
+"       │┌ where it makes sense, remove a comment leader when joining lines
 "       ││
 set fo+=1jnq
 "         ││
-"         │└─ allow formatting of comments with "gq"
-"         └─ when formatting text, use 'flp' to recognize numbered lists
+"         │└ allow formatting of comments with "gq"
+"         └ when formatting text, use 'flp' to recognize numbered lists
 
 augroup my_default_local_formatoptions
     au!

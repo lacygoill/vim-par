@@ -344,12 +344,12 @@ fu! s:remove_hyphens(lnum1, lnum2, cmd) abort "{{{2
     " We need to also remove the spaces which may come after on the next line.
     " Otherwise, a word like:
     "
-    "       spec-
-    "       ification
+    "     spec-
+    "     ification
     "
     " ... could be transformed like this:
     "
-    "       spec  ification
+    "     spec  ification
     "
     " At that  point, we would  have no way  to determine whether  2 consecutive
     " words are in fact the 2 parts of a single word which need to be merged.
@@ -359,15 +359,6 @@ fu! s:remove_hyphens(lnum1, lnum2, cmd) abort "{{{2
     " commands (:join, gq) from operating on the wrong lines.
     "}}}
     sil exe 'keepj keepp '.range.'s/'.pat."/\<c-a>/ge"
-    "                                         │{{{
-    "                                         └ You can use `\x01` in a string:
-    "                                                echo "\x01"
-    "
-    "                                           You can use `\%x01` in a pattern:
-    "                                               /\%x01
-    "
-    "                                           But here, we're neither in a string nor in a pattern.
-    "}}}
 
     if a:cmd is# 'split_paragraph'
         " In a markdown file, we could have a leading `>` in front of quoted lines.
@@ -489,8 +480,8 @@ endfu
 
 fu! s:has_to_format_list(lnum1) abort "{{{2
     " Format sth like this:
-    "     - the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
-    "     - the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
+    "    - the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
+    "    - the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
     return getline(a:lnum1) =~# &l:flp && s:get_fp() =~# '^par\s'
 endfu
 
