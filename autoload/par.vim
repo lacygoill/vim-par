@@ -7,7 +7,7 @@ fu! par#gq(type, ...) abort "{{{2
     " If 'fp' doesn't invoke `$ par`, but something else like `$ js-beautify`,
     " we should let the external program do its job without interfering.
     if s:get_fp() !~# '^par\s'
-        sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
+        sil exe 'norm! '..lnum1..'Ggq'..lnum2..'G'
         return
     endif
 
@@ -37,8 +37,8 @@ endfu
 
 fu! par#remove_duplicate_spaces(type) abort "{{{2
     let range = line("'[").','.line("']")
-    exe range.'RemoveTabs'
-    exe 'keepj keepp '.range.'s/\s\{2,}/ /gce'
+    exe range..'RemoveTabs'
+    exe 'keepj keepp '..range..'s/\s\{2,}/ /gce'
 endfu
 
 fu! par#split_paragraph(mode, ...) abort "{{{2
@@ -60,7 +60,7 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
         " for a sentence. Otherwise, our function could wrongly delete some lines.
         if getline(lnum2) =~# '\s*[^.!?:]$'
             let remove_final_dot = 1
-            call setline(lnum2, getline(lnum2).'.')
+            call setline(lnum2, getline(lnum2)..'.')
         endif
 
         let was_commented = s:is_commented()
@@ -82,7 +82,7 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
         " For example, it may begin with a quote.
         "}}}
         let indent = matchstr(getline(lnum1), '^\s*')
-        let rep = "\n\n".indent
+        let rep = "\n\n"..indent
         sil exe printf('keepj keepp s/%s/\=%s/ge', pat, string(rep))
 
         if b:changedtick != changedtick
@@ -141,14 +141,14 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
     " We don't want that.
     " So, we temporarily replace them with ‘C-b’.
     "}}}
-    sil exe 'keepj keepp '.lnum1.','.lnum2.'s/\[.\{-}\]\[\d\+\]/\=substitute(submatch(0), " ", "\<c-b>", "g")/ge'
+    sil exe 'keepj keepp '..lnum1..','..lnum2..'s/\[.\{-}\]\[\d\+\]/\=substitute(submatch(0), " ", "\<c-b>", "g")/ge'
 
     " format the text-object
-    sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
+    sil exe 'norm! '..lnum1..'Ggq'..lnum2..'G'
     let lnum2 = line("']")
 
     " `s:remove_hyphens()` may have left some ‘C-a’s
-    sil exe 'keepj keepp '.lnum1.','.lnum2.'s/\%x01\s*//ge'
+    sil exe 'keepj keepp '..lnum1..','..lnum2..'s/\%x01\s*//ge'
 
     " Why?{{{
     "
@@ -163,11 +163,11 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
     " I don't want to recompute the range.
     " It's easier to remove them AFTER `gq`, and re-format a second time.
     "}}}
-    sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
+    sil exe 'norm! '..lnum1..'Ggq'..lnum2..'G'
 
     " If  the original  text had  a reference  link with  spaces, replace  every
     " possible ‘C-b’ with a space.
-    sil exe 'keepj keepp '.lnum1.','.lnum2.'s/\[.\{-}\]\[\d\+\]/\=substitute(submatch(0), "\<c-b>", " ", "g")/ge'
+    sil exe 'keepj keepp '..lnum1..','..lnum2..'s/\[.\{-}\]\[\d\+\]/\=substitute(submatch(0), "\<c-b>", " ", "g")/ge'
 
     " If the text was commented, make sure it's still commented.
     " Necessary if  we've pressed `gqq`  on a long commented  line which
@@ -191,10 +191,10 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
     " there're several diagram characters on a single line.
     "}}}
     let line = getline(lnum1)
-    let pat = '^\s*'.s:get_cml().'\s\zs\s'
+    let pat = '^\s*'..s:get_cml()..'\s\zs\s'
     if line =~# pat
         call setline(lnum1, substitute(line, pat, '', ''))
-        sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
+        sil exe 'norm! '..lnum1..'Ggq'..lnum2..'G'
     endif
 endfu
 
@@ -221,7 +221,7 @@ fu! s:gq_in_diagram(lnum1, lnum2) abort "{{{2
     while search('[┌└]', 'W') && g < 100
         let l = line('.')
         " if the previous line is not an empty diagram line
-        if getline(l-1) !~# '^\s*'.cml.'\s*│\s*$' && l <= lnum2 && l > lnum1
+        if getline(l-1) !~# '^\s*'..cml..'\s*│\s*$' && l <= lnum2 && l > lnum1
             " put one above
             let line = getline(l)
             let line = substitute(line, '\s*┌.*', '', '')
@@ -270,7 +270,7 @@ fu! s:gq_in_diagram(lnum1, lnum2) abort "{{{2
     sil exe printf('keepj keepp %d,%ds/│/|/ge', lnum1, lnum2)
 
     " format the lines
-    sil exe 'norm! '.lnum1.'Ggq'.lnum2.'G'
+    sil exe 'norm! '..lnum1..'Ggq'..lnum2..'G'
 
     " `gq` could have increased the number of lines, or reduced it.{{{
     "
@@ -283,7 +283,7 @@ fu! s:gq_in_diagram(lnum1, lnum2) abort "{{{2
     sil exe printf('keepj keepp %d,%ds/| \([\x01\x02]\)/\=%s[submatch(1)]/ge', lnum1, lnum2,
     \ {"\x01": '┌', "\x02": '└'})
     " pattern describing a bar preceded by only spaces or other bars
-    let pat = '\%(^\s*'.cml.'[ |]*\)\@<=|'
+    let pat = '\%(^\s*'..cml..'[ |]*\)\@<=|'
     sil exe printf('keepj keepp %d,%ds/%s/│/ge', lnum1, lnum2, pat)
 
     " For lower diagrams, there will be an undesired `│` below every `└`.
@@ -309,7 +309,7 @@ fu! s:format_list(lnum1, lnum2) abort "{{{2
     try
         " 'ai' needs to be set so that `gw` can properly indent the formatted lines
         setl ai
-        sil exe 'norm! '.a:lnum1.'Ggw'.a:lnum2.'G'
+        sil exe 'norm! '..a:lnum1..'Ggw'..a:lnum2..'G'
     catch
         return lg#catch_error()
     finally
@@ -320,18 +320,18 @@ endfu
 fu! s:make_sure_properly_commented(lnum1, lnum2) abort "{{{2
     for i in range(a:lnum1, a:lnum2)
         if !s:is_commented(i)
-            sil exe 'keepj keepp '.i.'CommentToggle'
+            sil exe 'keepj keepp '..i..'CommentToggle'
         endif
     endfor
 endfu
 
 fu! s:remove_hyphens(lnum1, lnum2, cmd) abort "{{{2
     let [lnum1, lnum2] = [a:lnum1, a:lnum2]
-    let range = lnum1.','.lnum2
+    let range = lnum1..','..lnum2
 
     " Replace soft hyphens which we sometimes copy from a pdf.
     " They are annoying because they mess up the display of nearby characters.
-    sil exe 'keepj keepp '.range.'s/\%u00ad/-/ge'
+    sil exe 'keepj keepp '..range..'s/\%u00ad/-/ge'
 
     " pattern describing a hyphen breaking a word on two lines
     let pat = '[\u2010-]\ze\n\s*\S\+'
@@ -358,17 +358,17 @@ fu! s:remove_hyphens(lnum1, lnum2, cmd) abort "{{{2
     " But if we  do that now, we'll  alter the range, which will  cause the next
     " commands (:join, gq) from operating on the wrong lines.
     "}}}
-    sil exe 'keepj keepp '.range.'s/'.pat."/\<c-a>/ge"
+    sil exe 'keepj keepp '..range..'s/'..pat.."/\<c-a>/ge"
 
     if a:cmd is# 'split_paragraph'
         " In a markdown file, we could have a leading `>` in front of quoted lines.
         " The next `:j` won't remove them. We need to do it manually, and keep only
         " the first one.
         " TODO: What happens if there are nested quotes?
-        sil exe 'keepj keepp'.(lnum1+(lnum1 < lnum2 ? 1 : 0)).','.lnum2.'s/^>//e'
+        sil exe 'keepj keepp'..(lnum1+(lnum1 < lnum2 ? 1 : 0))..','..lnum2..'s/^>//e'
 
         " join all the lines in a single one
-        sil exe 'keepj '.range.'j'
+        sil exe 'keepj '..range..'j'
 
         " Now that we've joined all the lines, remove every ‘C-a’.
         sil keepj keepp s/\%x01\s*//ge
@@ -379,15 +379,15 @@ endfu
 fu! s:get_char_above() abort "{{{2
     " `virtcol()` may  not be  totally reliable,  but it  should be  good enough
     " here, because the lines we format should not be too long.
-    return matchstr(getline(line('.')-1), '\%'.virtcol('.').'v.')
+    return matchstr(getline(line('.')-1), '\%'..virtcol('.')..'v.')
 endfu
 
 fu! s:get_char_after() abort "{{{2
-    return matchstr(getline('.'), '\%'.col('.').'c.\zs.')
+    return matchstr(getline('.'), '\%'..col('.')..'c.\zs.')
 endfu
 
 fu! s:get_char_below() abort "{{{2
-    return matchstr(getline(line('.')+1), '\%'.virtcol('.').'v.')
+    return matchstr(getline(line('.')+1), '\%'..virtcol('.')..'v.')
 endfu
 
 fu! s:get_cml(...) abort "{{{2
@@ -396,8 +396,8 @@ fu! s:get_cml(...) abort "{{{2
     endif
     let cml = split(&l:cms, '%s')[0]
     return a:0
-    \ ?        '\%(\V'.escape(cml, '\').'\m\)\='
-    \ :        '\V'.escape(cml, '\').'\m'
+    \ ?        '\%(\V'..escape(cml, '\')..'\m\)\='
+    \ :        '\V'..escape(cml, '\')..'\m'
 endfu
 
 fu! s:get_fp() abort "{{{2
@@ -445,7 +445,7 @@ fu! s:get_range(for_who, mode) abort "{{{2
         " So, in both cases, we should ignore those lines.
         "}}}
         let cml = s:get_cml('with_equal_quantifier')
-        let pat = '^\s*'.cml.'\%(\s*│\)\+\s*$'
+        let pat = '^\s*'..cml..'\%(\s*│\)\+\s*$'
         if getline(lnum1) =~# pat
             let lnum1 += 1
         elseif getline(lnum2) =~# pat
@@ -490,7 +490,7 @@ fu! s:is_commented(...) abort "{{{2
         return 0
     else
         let line = getline(a:0 ? a:1 : line('.'))
-        return line =~# '^\s*'.s:get_cml()
+        return line =~# '^\s*'..s:get_cml()
     endif
 endfu
 
