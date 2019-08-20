@@ -94,7 +94,7 @@ nmap <silent><unique>  gqq  gq_
 " > {commands} should  be a complete command.   If {commands} does not  finish a
 " > command, the last one will be aborted as if <Esc> or <C-C> was typed.
 "}}}
-nno  <silent><unique>  gqs  :<c-u>set opfunc=par#remove_duplicate_spaces<bar>call feedkeys(v:count1.'g@_', 'in')<cr>
+nno  <silent><unique>  gqs  :<c-u>set opfunc=par#remove_duplicate_spaces<bar>call feedkeys(v:count1..'g@_', 'in')<cr>
 " }}}1
 " Options {{{1
 " formatprg {{{2
