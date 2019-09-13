@@ -4,7 +4,7 @@ fu! par#gq(type, ...) abort "{{{2
             \ ? [a:1, a:2]
             \ : s:get_range('gq', a:type)
 
-    " If 'fp' doesn't invoke `$ par`, but something else like `$ js-beautify`,
+    " If 'fp' doesn't invoke `par(1)`, but something else like `js-beautify`,
     " we should let the external program do its job without interfering.
     if s:get_fp() !~# '^par\s'
         sil exe 'norm! '..lnum1..'Ggq'..lnum2..'G'
@@ -136,7 +136,7 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
     "
     "     [some description][id]
     "
-    " And if  the description, or the  reference, contains some spaces,  `$ par`
+    " And if the  description, or the reference, contains  some spaces, `par(1)`
     " may break the link on two lines.
     " We don't want that.
     " So, we temporarily replace them with ‘C-b’.
@@ -434,7 +434,7 @@ fu! s:get_range(for_who, mode) abort "{{{2
         "
         "     │    │
         "
-        " Otherwise,  `$ par` will remove  this line, which makes  the diagram a
+        " Otherwise, `par(1)` will  remove this line, which makes  the diagram a
         " little ugly.
         "
         " And, if the first/last line looks like:

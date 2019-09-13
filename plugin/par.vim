@@ -99,7 +99,7 @@ nno  <silent><unique>  gqs  :<c-u>set opfunc=par#remove_duplicate_spaces<bar>cal
 " Options {{{1
 " formatprg {{{2
 
-" `$ par` is more powerful than Vim's internal formatting function.
+" `par(1)` is more powerful than Vim's internal formatting function.
 " The latter has several drawbacks:
 "
 "    - it uses a greedy algorithm, which makes it fill a line as much as it
