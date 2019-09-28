@@ -305,7 +305,7 @@ fu! s:gq_in_diagram(lnum1, lnum2) abort "{{{2
 endfu
 
 fu! s:format_list(lnum1, lnum2) abort "{{{2
-    let ai_save = &l:ai
+    let [ai_save, bufnr] = [&l:ai, bufnr('%')]
     try
         " 'ai' needs to be set so that `gw` can properly indent the formatted lines
         setl ai
@@ -313,7 +313,7 @@ fu! s:format_list(lnum1, lnum2) abort "{{{2
     catch
         return lg#catch_error()
     finally
-        let &l:ai = ai_save
+        call setbufvar(bufnr, '&ai', ai_save)
     endtry
 endfu
 
