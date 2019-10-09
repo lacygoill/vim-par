@@ -411,7 +411,7 @@ fu! s:get_kind_of_text(lnum1, lnum2) abort "{{{2
     \ ?            'diagram'
     \ :            'normal'
 
-    if a:lnum2 ==# a:lnum1
+    if a:lnum2 == a:lnum1
         return kind
     endif
 
@@ -466,7 +466,7 @@ fu! s:get_range(for_who, mode) abort "{{{2
     let [firstline, lastline] = [line("'{"), line("'}")]
 
     " get the address of the first line
-    let lnum1 = firstline ==# 1 && getline(1) =~# '\S'
+    let lnum1 = firstline == 1 && getline(1) =~# '\S'
     \ ?     1
     \ :     firstline + 1
 
