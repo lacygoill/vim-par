@@ -76,7 +76,7 @@ xno  <silent><unique>  gq  :<c-u>call par#gq('x')<cr>
 "                                           ^
 "                                           no range = current line
 "}}}
-com! -bar -range ParGq call par#gq('Ex', <line1>, <line2>)
+com -bar -range ParGq call par#gq('Ex', <line1>, <line2>)
 
 " gqq {{{2
 

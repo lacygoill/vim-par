@@ -1,5 +1,5 @@
 " Interface {{{1
-fu! par#gq(type, ...) abort "{{{2
+fu par#gq(type, ...) abort "{{{2
     let [lnum1, lnum2] = a:0
             \ ? [a:1, a:2]
             \ : s:get_range('gq', a:type)
@@ -35,13 +35,13 @@ fu! par#gq(type, ...) abort "{{{2
     endtry
 endfu
 
-fu! par#remove_duplicate_spaces(type) abort "{{{2
+fu par#remove_duplicate_spaces(type) abort "{{{2
     let range = line("'[").','.line("']")
     exe range..'RemoveTabs'
     exe 'keepj keepp '..range..'s/\s\{2,}/ /gce'
 endfu
 
-fu! par#split_paragraph(mode, ...) abort "{{{2
+fu par#split_paragraph(mode, ...) abort "{{{2
     if getline('.') =~# '^\s*$'
         return
     endif
@@ -123,7 +123,7 @@ fu! par#split_paragraph(mode, ...) abort "{{{2
 endfu
 " }}}1
 " Core {{{1
-fu! s:gq(lnum1, lnum2) abort "{{{2
+fu s:gq(lnum1, lnum2) abort "{{{2
     let [lnum1, lnum2] = [a:lnum1, a:lnum2]
     let was_commented = s:is_commented()
 
@@ -198,7 +198,7 @@ fu! s:gq(lnum1, lnum2) abort "{{{2
     endif
 endfu
 
-fu! s:gq_in_diagram(lnum1, lnum2) abort "{{{2
+fu s:gq_in_diagram(lnum1, lnum2) abort "{{{2
     let [lnum1, lnum2] = [a:lnum1, a:lnum2]
     let cml = s:get_cml('with_equal_quantifier')
     let pos = getcurpos()
@@ -304,7 +304,7 @@ fu! s:gq_in_diagram(lnum1, lnum2) abort "{{{2
     call setpos('.', pos)
 endfu
 
-fu! s:format_list(lnum1, lnum2) abort "{{{2
+fu s:format_list(lnum1, lnum2) abort "{{{2
     let [ai_save, bufnr] = [&l:ai, bufnr('%')]
     try
         " 'ai' needs to be set so that `gw` can properly indent the formatted lines
@@ -317,7 +317,7 @@ fu! s:format_list(lnum1, lnum2) abort "{{{2
     endtry
 endfu
 
-fu! s:make_sure_properly_commented(lnum1, lnum2) abort "{{{2
+fu s:make_sure_properly_commented(lnum1, lnum2) abort "{{{2
     for i in range(a:lnum1, a:lnum2)
         if !s:is_commented(i)
             sil exe 'keepj keepp '..i..'CommentToggle'
@@ -325,7 +325,7 @@ fu! s:make_sure_properly_commented(lnum1, lnum2) abort "{{{2
     endfor
 endfu
 
-fu! s:remove_hyphens(lnum1, lnum2, cmd) abort "{{{2
+fu s:remove_hyphens(lnum1, lnum2, cmd) abort "{{{2
     let [lnum1, lnum2] = [a:lnum1, a:lnum2]
     let range = lnum1..','..lnum2
 
@@ -376,21 +376,21 @@ fu! s:remove_hyphens(lnum1, lnum2, cmd) abort "{{{2
 endfu
 " }}}1
 " Util {{{1
-fu! s:get_char_above() abort "{{{2
+fu s:get_char_above() abort "{{{2
     " `virtcol()` may  not be  totally reliable,  but it  should be  good enough
     " here, because the lines we format should not be too long.
     return matchstr(getline(line('.')-1), '\%'..virtcol('.')..'v.')
 endfu
 
-fu! s:get_char_after() abort "{{{2
+fu s:get_char_after() abort "{{{2
     return matchstr(getline('.'), '\%'..col('.')..'c.\zs.')
 endfu
 
-fu! s:get_char_below() abort "{{{2
+fu s:get_char_below() abort "{{{2
     return matchstr(getline(line('.')+1), '\%'..virtcol('.')..'v.')
 endfu
 
-fu! s:get_cml(...) abort "{{{2
+fu s:get_cml(...) abort "{{{2
     if &l:cms is# ''
         return ''
     endif
@@ -400,13 +400,13 @@ fu! s:get_cml(...) abort "{{{2
     \ :        '\V'..escape(cml, '\')..'\m'
 endfu
 
-fu! s:get_fp() abort "{{{2
+fu s:get_fp() abort "{{{2
     return &l:fp is# ''
     \ ?        &g:fp
     \ :        &l:fp
 endfu
 
-fu! s:get_kind_of_text(lnum1, lnum2) abort "{{{2
+fu s:get_kind_of_text(lnum1, lnum2) abort "{{{2
     let kind = getline(a:lnum1) =~# '[│┌└]'
     \ ?            'diagram'
     \ :            'normal'
@@ -424,7 +424,7 @@ fu! s:get_kind_of_text(lnum1, lnum2) abort "{{{2
     return kind
 endfu
 
-fu! s:get_range(for_who, mode) abort "{{{2
+fu s:get_range(for_who, mode) abort "{{{2
     if a:mode is# 'x'
         let [lnum1, lnum2] = [line("'<"), line("'>")]
         " Why not returning the previous addresses directly?{{{
@@ -478,14 +478,14 @@ fu! s:get_range(for_who, mode) abort "{{{2
     return [lnum1, lnum2]
 endfu
 
-fu! s:has_to_format_list(lnum1) abort "{{{2
+fu s:has_to_format_list(lnum1) abort "{{{2
     " Format sth like this:
     "    - the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
     "    - the quick brown fox jumps over the lazy dog the quick brown fox jumps over the lazy dog
     return getline(a:lnum1) =~# &l:flp && s:get_fp() =~# '^par\s'
 endfu
 
-fu! s:is_commented(...) abort "{{{2
+fu s:is_commented(...) abort "{{{2
     if &l:cms is# ''
         return 0
     else
@@ -494,7 +494,7 @@ fu! s:is_commented(...) abort "{{{2
     endif
 endfu
 
-fu! par#split_paragraph_save_param(mode, with_empty_lines) abort "{{{2
+fu par#split_paragraph_save_param(mode, with_empty_lines) abort "{{{2
     let s:split_paragraph_mode = a:mode
     let s:split_paragraph_with_empty_lines = a:with_empty_lines
 endfu
