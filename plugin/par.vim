@@ -38,13 +38,13 @@ let g:loaded_par = 1
 " So any operator invoking `par#gq()` needs `g@_`.
 " But `par#gq()` is NOT `par#split_paragraph()`.
 "}}}
-nno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('n', 0)<bar>set opfunc=par#split_paragraph<cr>g@l
-xno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('x', 0)<bar>set opfunc=par#split_paragraph<cr>g@l
+nno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('n', 0)<bar>set opfunc=par#split_paragraph<bar>norm! g@l<cr>
+xno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('x', 0)<bar>set opfunc=par#split_paragraph<bar>norm! g@l<cr>
 
 " SPC C-p {{{2
 
-nno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('n', 1)<bar>set opfunc=par#split_paragraph<cr>g@l
-xno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('x', 1)<bar>set opfunc=par#split_paragraph<cr>g@l
+nno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('n', 1)<bar>set opfunc=par#split_paragraph<bar>norm! g@l<cr>
+xno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('x', 1)<bar>set opfunc=par#split_paragraph<bar>norm! g@l<cr>
 
 " SPC P {{{2
 
@@ -52,8 +52,8 @@ nmap <unique>  <space>P  gqip
 
 " gq {{{2
 
-nno  <silent><unique>  gq  :<c-u>set opfunc=par#gq<cr>g@
-xno  <silent><unique>  gq  :<c-u>call par#gq('x')<cr>
+nno <silent><unique> gq :<c-u>set opfunc=par#gq<cr>g@
+xno <silent><unique> gq :<c-u>call par#gq('x')<cr>
 
 " What do you need this command for?{{{
 "
@@ -94,7 +94,7 @@ nmap <silent><unique>  gqq  gq_
 " > {commands} should  be a complete command.   If {commands} does not  finish a
 " > command, the last one will be aborted as if <Esc> or <C-C> was typed.
 "}}}
-nno  <silent><unique>  gqs  :<c-u>set opfunc=par#remove_duplicate_spaces<bar>call feedkeys(v:count1..'g@_', 'in')<cr>
+nno <silent><unique> gqs :<c-u>set opfunc=par#remove_duplicate_spaces<bar>call feedkeys(v:count1..'g@_', 'in')<cr>
 " }}}1
 " Options {{{1
 " formatprg {{{2

@@ -68,11 +68,11 @@
 
 
 
-"                                     search('=\%#>', 'bn', line('.'))
-"                                            │        │     │
-"   match any `=[>]`, where `[]` denotes the ┘        │     │
-"   cursor's position                                 │     │
-"            backwards without moving the cursor and  ┘     │
-"            match any `=[>]`, where `[]` denotes the       │
-"                           search in the current line only ┘
+"                                         search('=\%#>', 'bn', line('.'))
+"                                                │        │     │
+"       match any `=[>]`, where `[]` denotes the ┘        │     │
+"       cursor's position                                 │     │
+"                backwards without moving the cursor and  ┘     │
+"                match any `=[>]`, where `[]` denotes the       │
+"                               search in the current line only ┘
 
