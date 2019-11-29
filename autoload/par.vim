@@ -4,7 +4,7 @@ fu par#gq(type, ...) abort "{{{2
             \ ? [a:1, a:2]
             \ : s:get_range('gq', a:type)
 
-    " If 'fp' doesn't invoke `par(1)`, but something else like `js-beautify`,
+    " If `'fp'` doesn't invoke `par(1)`,  but something else like `js-beautify`,
     " we should let the external program do its job without interfering.
     if s:get_fp() !~# '^par\s'
         sil exe 'norm! '..lnum1..'Ggq'..lnum2..'G'
@@ -266,7 +266,7 @@ fu s:gq_in_diagram(lnum1, lnum2) abort "{{{2
 
     " temporarily replace diagram characters with control characters
     sil exe printf('keepj keepp %d,%ds/[┌└]/\="│ ".%s[submatch(0)]/e', lnum1, lnum2,
-    \ {'┌': "\x01", '└': "\x02"})
+        \ {'┌': "\x01", '└': "\x02"})
     sil exe printf('keepj keepp %d,%ds/│/|/ge', lnum1, lnum2)
 
     " format the lines
@@ -281,7 +281,7 @@ fu s:gq_in_diagram(lnum1, lnum2) abort "{{{2
 
     " restore diagram characters
     sil exe printf('keepj keepp %d,%ds/| \([\x01\x02]\)/\=%s[submatch(1)]/ge', lnum1, lnum2,
-    \ {"\x01": '┌', "\x02": '└'})
+        \ {"\x01": '┌', "\x02": '└'})
     " pattern describing a bar preceded by only spaces or other bars
     let pat = '\%(^\s*'..cml..'[ |]*\)\@<=|'
     sil exe printf('keepj keepp %d,%ds/%s/│/ge', lnum1, lnum2, pat)
@@ -307,7 +307,7 @@ endfu
 fu s:format_list(lnum1, lnum2) abort "{{{2
     let [ai_save, bufnr] = [&l:ai, bufnr('%')]
     try
-        " 'ai' needs to be set so that `gw` can properly indent the formatted lines
+        " `'ai'` needs to be set so that `gw` can properly indent the formatted lines
         setl ai
         sil exe 'norm! '..a:lnum1..'Ggw'..a:lnum2..'G'
     catch
@@ -353,17 +353,16 @@ fu s:remove_hyphens(lnum1, lnum2, cmd) abort "{{{2
     "
     " At that  point, we would  have no way  to determine whether  2 consecutive
     " words are in fact the 2 parts of a single word which need to be merged.
-    " So we need  to remove the hyphen,  and the newline, and the  spaces all at
-    " once.
+    " So we need to remove the hyphen, the newline, and the spaces all at once.
     " But if we  do that now, we'll  alter the range, which will  cause the next
-    " commands (:join, gq) from operating on the wrong lines.
+    " commands (`:join`, `gq`) from operating on the wrong lines.
     "}}}
     sil exe 'keepj keepp '..range..'s/'..pat.."/\<c-a>/ge"
 
     if a:cmd is# 'split_paragraph'
         " In a markdown file, we could have a leading `>` in front of quoted lines.
-        " The next `:j` won't remove them. We need to do it manually, and keep only
-        " the first one.
+        " The next `:j`  won't remove them. We need to do  it manually, and keep
+        " only the first one.
         " TODO: What happens if there are nested quotes?
         sil exe 'keepj keepp'..(lnum1+(lnum1 < lnum2 ? 1 : 0))..','..lnum2..'s/^>//e'
 
@@ -396,20 +395,20 @@ fu s:get_cml(...) abort "{{{2
     endif
     let cml = split(&l:cms, '%s')[0]
     return a:0
-    \ ?        '\%(\V'..escape(cml, '\')..'\m\)\='
-    \ :        '\V'..escape(cml, '\')..'\m'
+        \ ? '\%(\V'..escape(cml, '\')..'\m\)\='
+        \ : '\V'..escape(cml, '\')..'\m'
 endfu
 
 fu s:get_fp() abort "{{{2
     return &l:fp is# ''
-    \ ?        &g:fp
-    \ :        &l:fp
+        \ ? &g:fp
+        \ : &l:fp
 endfu
 
 fu s:get_kind_of_text(lnum1, lnum2) abort "{{{2
     let kind = getline(a:lnum1) =~# '[│┌└]'
-    \ ?            'diagram'
-    \ :            'normal'
+        \ ? 'diagram'
+        \ : 'normal'
 
     if a:lnum2 == a:lnum1
         return kind
@@ -467,13 +466,13 @@ fu s:get_range(for_who, mode) abort "{{{2
 
     " get the address of the first line
     let lnum1 = firstline == 1 && getline(1) =~# '\S'
-    \ ?     1
-    \ :     firstline + 1
+        \ ? 1
+        \ : firstline + 1
 
     " get the address of the last line of the paragraph
     let lnum2 = getline(lastline) =~# '^\s*$'
-    \ ?     lastline - 1
-    \ :     lastline
+        \ ? lastline - 1
+        \ : lastline
 
     return [lnum1, lnum2]
 endfu
