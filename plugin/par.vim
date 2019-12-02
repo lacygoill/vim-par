@@ -60,7 +60,7 @@ xno <silent><unique> gq :<c-u>call par#gq('x')<cr>
 " In `par#split_paragraph()`, we need to format some lines with our custom `gq`.
 " We could do it with:
 "
-"         norm gq_
+"     norm gq_
 "
 " However, this would have the side effect of resetting 'opfunc'.
 " We would need to restore the option right after.
