@@ -357,7 +357,7 @@ fu s:remove_hyphens(lnum1, lnum2, cmd) abort "{{{2
     " But if we  do that now, we'll  alter the range, which will  cause the next
     " commands (`:join`, `gq`) from operating on the wrong lines.
     "}}}
-    sil exe 'keepj keepp '..range..'s/'..pat.."/\<c-a>/ge"
+    sil exe 'keepj keepp '..range..'s/'..pat.."/\x01/ge"
 
     if a:cmd is# 'split_paragraph'
         " In a markdown file, we could have a leading `>` in front of quoted lines.
