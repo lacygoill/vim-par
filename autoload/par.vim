@@ -390,10 +390,8 @@ fu s:get_char_below() abort "{{{2
 endfu
 
 fu s:get_cml(...) abort "{{{2
-    if &l:cms is# ''
-        return ''
-    endif
-    let cml = split(&l:cms, '%s')[0]
+    if &l:cms is# '' | return '' | endif
+    let cml = matchstr(&l:cms, '\S*\ze\s*%s')
     return a:0
         \ ? '\%(\V'..escape(cml, '\')..'\m\)\='
         \ : '\V'..escape(cml, '\')..'\m'
