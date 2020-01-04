@@ -217,8 +217,7 @@ fu s:gq_in_diagram(lnum1, lnum2) abort "{{{2
     "     │
     "     │         ┌ some long comment
     "}}}
-    let g = 0
-    while search('[┌└]', 'W') && g < 100
+    let g = 0 | while search('[┌└]', 'W') && g < 100 | let g += 1
         let l = line('.')
         " if the previous line is not an empty diagram line
         if getline(l-1) !~# '^\s*'..cml..'\s*│\s*$' && l <= lnum2 && l > lnum1
@@ -230,7 +229,6 @@ fu s:gq_in_diagram(lnum1, lnum2) abort "{{{2
             call append(l-1, line)
             let lnum2 += 1
         endif
-        let g += 1
     endwhile
 
     " For lower diagrams, we need to put a bar in front of every line which has no diagram character:{{{
@@ -244,23 +242,14 @@ fu s:gq_in_diagram(lnum1, lnum2) abort "{{{2
     "     | some comment
     "}}}
     call setpos('.', pos)
-    let g = 0
-    while search('└', 'W', lnum2)
-     \ && g <= 100
+    let g = 0 | while search('└', 'W', lnum2) && g <= 100 | let g += 1
         if s:get_char_above() !~# '[│├┤]'
             continue
         endif
         let pos_ = getcurpos()
-        let i = 1
-        let g_ = 0
-        while s:get_char_below() is# ' '
-         \ && s:get_char_after() is# ' '
-         \ && g_ <= 100
+        let gg = 0 | while s:get_char_below() is# ' ' && s:get_char_after() is# ' ' && gg <= 100 | let gg += 1
             exe 'norm! jr|'
-            let i += 1
-            let g_ += 1
         endwhile
-        let g += 1
         call setpos('.', pos_)
     endwhile
 
@@ -289,16 +278,10 @@ fu s:gq_in_diagram(lnum1, lnum2) abort "{{{2
     " For lower diagrams, there will be an undesired `│` below every `└`.
     " We need to remove them.
     call setpos('.', pos)
-    let g = 0
-    while search('└', 'W', lnum2) && g <= 100
-        let i = 1
-        let g_ = 0
-        while s:get_char_below() =~# '[│|]' && g_ <= 100
+    let g = 0 | while search('└', 'W', lnum2) && g <= 100 | let g += 1
+        let gg = 0 | while s:get_char_below() =~# '[│|]' && gg <= 100 | let gg += 1
             exe 'norm! jr '
-            let i += 1
-            let g_ += 1
         endwhile
-        let g += 1
     endwhile
 
     call setpos('.', pos)
