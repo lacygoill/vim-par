@@ -31,7 +31,7 @@ let g:loaded_par = 1
 "
 " You may have needed `g@_`, if you had written sth like:
 "
-"     exe 'norm! '.v:count1.'g@_'
+"     exe 'norm! '..v:count1..'g@_'
 "
 " Note that `par#gq()` calls `s:get_range('gq')`.
 " The latter refers to the change marks.
@@ -91,8 +91,8 @@ nmap <silent><unique>  gqq  gq_
 " Because of this, `:norm` would abort.
 " From `:h :norm`:
 "
-" > {commands} should  be a complete command.   If {commands} does not  finish a
-" > command, the last one will be aborted as if <Esc> or <C-C> was typed.
+" >     {commands} should be a complete command. If {commands} does not finish a
+" >     command, the last one will be aborted as if <Esc> or <C-C> was typed.
 "}}}
 nno <silent><unique> gqs :<c-u>set opfunc=par#remove_duplicate_spaces<bar>call feedkeys(v:count1..'g@_', 'in')<cr>
 " }}}1
