@@ -48,7 +48,7 @@ xno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('x
 
 " SPC P {{{2
 
-nmap <unique>  <space>P  gqip
+nmap <unique> <space>P gqip
 
 " gq {{{2
 
