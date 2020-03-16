@@ -31,7 +31,7 @@ fu par#gq(type, ...) abort "{{{2
             endif
         endif
     catch
-        return lg#catch_error()
+        return lg#catch()
     endtry
 endfu
 
@@ -118,7 +118,7 @@ fu par#split_paragraph(mode, ...) abort "{{{2
             sil exe printf('keepj keepp %d,%dg/^$/d_', lnum1, lnum2)
         endif
     catch
-        return lg#catch_error()
+        return lg#catch()
     finally
         call setpos('.', pos)
     endtry
@@ -296,7 +296,7 @@ fu s:format_list(lnum1, lnum2) abort "{{{2
         setl ai
         sil exe 'norm! '..a:lnum1..'Ggw'..a:lnum2..'G'
     catch
-        return lg#catch_error()
+        return lg#catch()
     finally
         call setbufvar(bufnr, '&ai', ai_save)
     endtry
