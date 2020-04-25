@@ -38,13 +38,13 @@ let g:loaded_par = 1
 " So any operator invoking `par#gq()` needs `g@_`.
 " But `par#gq()` is NOT `par#split_paragraph()`.
 "}}}
-nno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('n', 0)<bar>set opfunc=par#split_paragraph<bar>norm! g@l<cr>
-xno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('x', 0)<bar>set opfunc=par#split_paragraph<bar>norm! g@l<cr>
+nno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('n', 0)<bar>set opfunc=par#split_paragraph<cr>g@l
+xno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('x', 0)<bar>set opfunc=par#split_paragraph<cr>g@l
 
 " SPC C-p {{{2
 
-nno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('n', 1)<bar>set opfunc=par#split_paragraph<bar>norm! g@l<cr>
-xno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('x', 1)<bar>set opfunc=par#split_paragraph<bar>norm! g@l<cr>
+nno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('n', 1)<bar>set opfunc=par#split_paragraph<cr>g@l
+xno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('x', 1)<bar>set opfunc=par#split_paragraph<cr>g@l
 
 " SPC P {{{2
 
