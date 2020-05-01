@@ -19,27 +19,8 @@ let g:loaded_par = 1
 " Mappings {{{1
 " SPC p {{{2
 
-" Don't we need `g@_` instead of `g@l`?{{{
-"
-" No.
-" You can use both, it won't make a difference.
-" In both  cases, the  change marks will  refer to the  current line,  since you
-" don't prefix `g@` with `v:count1`.
-"
-" The only  difference will  be in  the columns, but  your function  operates on
-" whole lines; it doesn't care about columns.
-"
-" You may have needed `g@_`, if you had written sth like:
-"
-"     exe 'norm! '..v:count1..'g@_'
-"
-" Note that `par#gq()` calls `s:get_range('gq')`.
-" The latter refers to the change marks.
-" So any operator invoking `par#gq()` needs `g@_`.
-" But `par#gq()` is NOT `par#split_paragraph()`.
-"}}}
-nno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('n', 0)<bar>set opfunc=par#split_paragraph<cr>g@l
-xno <silent><unique>  <space>p  :<c-u>call par#split_paragraph_save_param('x', 0)<bar>set opfunc=par#split_paragraph<cr>g@l
+nno <silent><unique> <space>p :<c-u>call par#split_paragraph_save_param('n', 0)<bar>set opfunc=par#split_paragraph<cr>g@l
+xno <silent><unique> <space>p :<c-u>call par#split_paragraph_save_param('x', 0)<bar>set opfunc=par#split_paragraph<cr>g@l
 
 " SPC C-p {{{2
 
