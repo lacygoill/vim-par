@@ -138,8 +138,7 @@ set fo+=1jnq
 "         │└ allow formatting of comments with "gq"
 "         └ when formatting text, use 'flp' to recognize numbered lists
 
-augroup my_default_local_formatoptions
-    au!
+augroup my_default_local_formatoptions | au!
     " We've configured the global value of 'fo'.
     " Do the same for its local value in ANY filetype.
     au FileType * let &l:fo = &g:fo
