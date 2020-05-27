@@ -1,8 +1,26 @@
+if exists('g:autoloaded_par')
+    finish
+endif
+let g:autoloaded_par = 1
+
+" Init {{{1
+
+let s:split_paragraph = {
+    \ 'mode': '',
+    \ 'with_empty_lines': v:false,
+    \ }
+
 " Interface {{{1
-fu par#gq(type, ...) abort "{{{2
-    let [lnum1, lnum2] = a:0
+fu par#gq(...) abort "{{{2
+    if !a:0
+        let &opfunc = 'par#gq'
+        return 'g@'
+    endif
+
+    call extend(s:split_paragraph, {'mode': mode()})
+    let [lnum1, lnum2] = a:0 > 1
             \ ? [a:1, a:2]
-            \ : s:get_range('gq', a:type)
+            \ : s:get_range('gq')
 
     " If `'fp'` doesn't invoke `par(1)`,  but something else like `js-beautify`,
     " we should let the external program do its job without interfering.
@@ -35,7 +53,20 @@ fu par#gq(type, ...) abort "{{{2
     endtry
 endfu
 
-fu par#remove_duplicate_spaces(type) abort "{{{2
+fu par#split_paragraph_setup(with_empty_lines) abort "{{{2
+    let s:split_paragraph = {
+        \ 'mode': mode(),
+        \ 'with_empty_lines': a:with_empty_lines,
+        \ }
+    let &opfunc = 'par#split_paragraph'
+    return 'g@'..(mode() is# 'n' ? 'l' : '')
+endfu
+
+fu par#remove_duplicate_spaces(...) abort "{{{2
+    if !a:0
+        let &opfunc = 'par#remove_duplicate_spaces'
+        return 'g@'
+    endif
     let range = line("'[")..','..line("']")
     exe range..'RemoveTabs'
     exe 'keepj keepp '..range..'s/[ \t\xa0]\{2,}/ /gce'
@@ -43,14 +74,12 @@ fu par#remove_duplicate_spaces(type) abort "{{{2
     "                                 └ no-break space
 endfu
 
-fu par#split_paragraph(mode, ...) abort "{{{2
-    if getline('.') =~# '^\s*$'
-        return
-    endif
+fu par#split_paragraph(_) abort "{{{2
+    if getline('.') =~# '^\s*$' | return | endif
 
     let pos = getcurpos()
     try
-        let [lnum1, lnum2] = s:get_range('split-paragraph', s:split_paragraph_mode)
+        let [lnum1, lnum2] = s:get_range('split-paragraph')
 
         if s:has_to_format_list(lnum1)
             call s:format_list(lnum1, lnum2)
@@ -69,14 +98,13 @@ fu par#split_paragraph(mode, ...) abort "{{{2
 
         call s:remove_hyphens(lnum1, lnum2, 'split_paragraph')
 
-        " break the line down according to the punctuation
+        " break down the line according to the punctuation
         let pat = '\C\%([a-z][.][a-z]\|etc\|resp\|[.][.]\)\@4<![.!?]\zs\%(\s\+\|$\)\|:\zs\s*$'
         "            ├──────────────┘  ├───────┘  ├────┘{{{
         "            │                 │          └ don't break something like `...`
         "            │                 └ don't break after `etc.` or `resp.`
         "            └ don't break after `e.g.`, `i.e.`, ...
         "}}}
-
         let changedtick = b:changedtick
         " Why [.a-z]\@! instead of \u (uppercase character)?{{{
         "
@@ -90,12 +118,15 @@ fu par#split_paragraph(mode, ...) abort "{{{2
         if b:changedtick != changedtick
             " If the previous command has changed/split the paragraph, two empty
             " lines have  probably been added (one  where we are right  now, and
-            " the one above). Remove them.
+            " the one above).  Remove them.
             " Why using a global command?{{{
             "
             " To be sure we're deleting empty lines.
             "}}}
             sil keepj keepp -,g/^\s*$/d_
+            " it seems necessary when we press `SPC p` in visual mode, otherwise
+            " one extra line is unexpectedly formatted
+            -
         endif
 
         " format each non-empty line with our custom `gq`
@@ -114,7 +145,7 @@ fu par#split_paragraph(mode, ...) abort "{{{2
         endif
 
         " remove empty lines
-        if !s:split_paragraph_with_empty_lines
+        if !s:split_paragraph.with_empty_lines
             sil exe printf('keepj keepp %d,%dg/^$/d_', lnum1, lnum2)
         endif
     catch
@@ -406,8 +437,8 @@ fu s:get_kind_of_text(lnum1, lnum2) abort "{{{2
     return kind
 endfu
 
-fu s:get_range(for_who, mode) abort "{{{2
-    if a:mode is# 'x'
+fu s:get_range(for_who) abort "{{{2
+    if s:split_paragraph.mode =~# "^[vV\<c-v>]$"
         let [lnum1, lnum2] = [line("'<"), line("'>")]
         " Why not returning the previous addresses directly?{{{
         "
@@ -437,7 +468,6 @@ fu s:get_range(for_who, mode) abort "{{{2
         elseif getline(lnum1) =~# '[├┤]'
             let lnum1 += 1
         endif
-
         return [lnum1, lnum2]
     endif
 
@@ -474,10 +504,5 @@ fu s:is_commented(...) abort "{{{2
         let line = getline(a:0 ? a:1 : line('.'))
         return line =~# '^\s*'..s:get_cml()
     endif
-endfu
-
-fu par#split_paragraph_save_param(mode, with_empty_lines) abort "{{{2
-    let s:split_paragraph_mode = a:mode
-    let s:split_paragraph_with_empty_lines = a:with_empty_lines
 endfu
 

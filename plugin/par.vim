@@ -19,13 +19,13 @@ let g:loaded_par = 1
 " Mappings {{{1
 " SPC p {{{2
 
-nno <silent><unique> <space>p :<c-u>call par#split_paragraph_save_param('n', 0)<bar>set opfunc=par#split_paragraph<cr>g@l
-xno <silent><unique> <space>p :<c-u>call par#split_paragraph_save_param('x', 0)<bar>set opfunc=par#split_paragraph<cr>g@l
+nno <expr><unique> <space>p par#split_paragraph_setup(v:false)
+xno <expr><unique> <space>p par#split_paragraph_setup(v:false)
 
 " SPC C-p {{{2
 
-nno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('n', 1)<bar>set opfunc=par#split_paragraph<cr>g@l
-xno <silent><unique>  <space><c-p>  :<c-u>call par#split_paragraph_save_param('x', 1)<bar>set opfunc=par#split_paragraph<cr>g@l
+nno <expr><unique> <space><c-p> par#split_paragraph_setup(v:true)
+xno <expr><unique> <space><c-p> par#split_paragraph_setup(v:true)
 
 " SPC P {{{2
 
@@ -33,8 +33,8 @@ nmap <unique> <space>P gqip
 
 " gq {{{2
 
-nno <silent><unique> gq :<c-u>set opfunc=par#gq<cr>g@
-xno <silent><unique> gq :<c-u>call par#gq('x')<cr>
+nno <expr><unique> gq par#gq()
+xno <expr><unique> gq par#gq()
 
 " What do you need this command for?{{{
 "
@@ -57,7 +57,7 @@ xno <silent><unique> gq :<c-u>call par#gq('x')<cr>
 "                                           ^
 "                                           no range = current line
 "}}}
-com -bar -range ParGq call par#gq('Ex', <line1>, <line2>)
+com -bar -range ParGq call par#gq(<line1>, <line2>)
 
 " gqq {{{2
 
@@ -65,17 +65,7 @@ nmap <silent><unique>  gqq  gq_
 
 " gqs {{{2
 
-" Why `feedkeys()` instead of `:norm!`?{{{
-"
-" Our operator function will execute `:s` with the `c` (confirmation) flag.
-" This is an unfinished command: it requires our input to finish.
-" Because of this, `:norm` would abort.
-" From `:h :norm`:
-"
-" >     {commands} should be a complete command. If {commands} does not finish a
-" >     command, the last one will be aborted as if <Esc> or <C-C> was typed.
-"}}}
-nno <silent><unique> gqs :<c-u>set opfunc=par#remove_duplicate_spaces<bar>call feedkeys(v:count1..'g@_', 'in')<cr>
+nno <expr><unique> gqs par#remove_duplicate_spaces()..'_'
 " }}}1
 " Options {{{1
 " formatprg {{{2
