@@ -61,11 +61,11 @@ com -bar -range ParGq call par#gq(<line1>, <line2>)
 
 " gqq {{{2
 
-nmap <silent><unique>  gqq  gq_
+nmap <silent><unique> gqq gq_
 
 " gqs {{{2
 
-nno <expr><unique> gqs par#remove_duplicate_spaces()..'_'
+nno <expr><unique> gqs par#remove_duplicate_spaces() .. '_'
 " }}}1
 " Options {{{1
 " formatprg {{{2
