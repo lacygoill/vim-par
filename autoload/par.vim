@@ -403,9 +403,9 @@ fu s:get_char_above() abort "{{{2
     return (line('.') - 1)->getline()->matchstr('\%' .. virtcol('.') .. 'v.')
 endfu
 
-fu s:get_char_after() abort "{{{2
-    return getline('.')->matchstr('\%' .. col('.') .. 'c.\zs.')
-endfu
+def s:get_char_after() #{{{2
+    return getline('.')->strpart(col('.') - 1)[1]
+enddef
 
 fu s:get_char_below() abort "{{{2
     return (line('.') + 1)->getline()->matchstr('\%' .. virtcol('.') .. 'v.')
