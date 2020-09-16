@@ -71,9 +71,12 @@ fu par#remove_duplicate_spaces(...) abort "{{{2
     endif
     let range = line("'[") .. ',' .. line("']")
     exe range .. 'RemoveTabs'
-    exe 'keepj keepp ' .. range .. 's/[ \t\xa0]\{2,}/ /gce'
-    "                                     ├──┘
-    "                                     └ no-break space
+    exe 'keepj keepp ' .. range .. 's/\%(\.\@1<=  \S\)\@!\&[ \t\xa0]\{2,}/ /gce'
+    "                                 ├───────────────────┘    ├──┘
+    "                                 │                        └ no-break space
+    "                                 └ preserve french spacing
+    "                                   which imo improves the readability of our notes
+    " https://en.wikipedia.org/wiki/History_of_sentence_spacing#French_and_English_spacing
 endfu
 
 fu par#split_paragraph(_) abort "{{{2
