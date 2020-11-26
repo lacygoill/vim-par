@@ -55,7 +55,7 @@ fu par#gq(...) abort "{{{2
     endtry
 endfu
 
-fu par#split_paragraph_setup(with_empty_lines) abort "{{{2
+fu par#split_paragraph_setup(with_empty_lines = v:false) abort "{{{2
     let s:split_paragraph = {
         \ 'mode': mode(),
         \ 'with_empty_lines': a:with_empty_lines,

@@ -19,8 +19,8 @@ let g:loaded_par = 1
 " Mappings {{{1
 " SPC p {{{2
 
-nno <expr><unique> <space>p par#split_paragraph_setup(v:false)
-xno <expr><unique> <space>p par#split_paragraph_setup(v:false)
+nno <expr><unique> <space>p par#split_paragraph_setup()
+xno <expr><unique> <space>p par#split_paragraph_setup()
 
 " SPC C-p {{{2
 
@@ -61,7 +61,7 @@ com -bar -range ParGq call par#gq(<line1>, <line2>)
 
 " gqq {{{2
 
-nmap <silent><unique> gqq gq_
+nmap <unique> gqq gq_
 
 " gqs {{{2
 
