@@ -289,7 +289,7 @@ fu s:gq_in_diagram(lnum1, lnum2) abort "{{{2
             continue
         endif
         let pos_ = getcurpos()
-        let gg = 0 | while s:get_char_below() is# ' ' && s:get_char_after() is# ' ' && gg <= 100 | let gg += 1
+        let gg = 0 | while s:get_char_below() is# ' ' && s:GetCharAfter() is# ' ' && gg <= 100 | let gg += 1
             exe 'norm! jr|'
         endwhile
         call setpos('.', pos_)
@@ -406,7 +406,7 @@ fu s:get_char_above() abort "{{{2
     return (line('.') - 1)->getline()->matchstr('\%' .. virtcol('.') .. 'v.')
 endfu
 
-def s:get_char_after() #{{{2
+def s:GetCharAfter() #{{{2
     return getline('.')->strpart(col('.') - 1)[1]
 enddef
 
