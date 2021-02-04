@@ -45,7 +45,7 @@ def par#gq(type: any = '', arg_lnum2 = 0): string #{{{2
             if kind_of_text == 'mixed'
                 echo 'can''t format a mix of diagram and regular lines'
             elseif kind_of_text == 'diagram'
-                if search('\s[┐┘]', 'nW', lnum2)
+                if search('\s[┐┘]', 'nW', lnum2) > 0
                     echo 'can''t format a diagram with branches on the right'
                     return ''
                 endif
@@ -278,7 +278,7 @@ def GqInDiagram(arg_lnum1: number, arg_lnum2: number) #{{{2
     #     │         ┌ some long comment
     #}}}
     var g: number = 0
-    while search('[┌└]', 'W') && g < 100
+    while search('[┌└]', 'W') > 0 && g < 100
         g += 1
         var l: number = line('.')
         # if the previous line is not an empty diagram line
@@ -305,7 +305,7 @@ def GqInDiagram(arg_lnum1: number, arg_lnum2: number) #{{{2
     #}}}
     setpos('.', pos)
     g = 0
-    while search('└', 'W', lnum2) && g <= 100
+    while search('└', 'W', lnum2) > 0 && g <= 100
         g += 1
         if GetCharAbove() !~ '[│├┤]'
             continue
@@ -345,7 +345,7 @@ def GqInDiagram(arg_lnum1: number, arg_lnum2: number) #{{{2
     # We need to remove them.
     setpos('.', pos)
     g = 0
-    while search('└', 'W', lnum2) && g <= 100
+    while search('└', 'W', lnum2) > 0 && g <= 100
         g += 1
         var gg: number = 0
         while GetCharBelow() =~ '[│|]' && gg <= 100
@@ -464,7 +464,7 @@ def GetFp(): string #{{{2
 enddef
 
 def GetKindOfText(lnum1: number, lnum2: number): string #{{{2
-    var kind: string = getline(lnum1) =~# '[│┌└]'
+    var kind: string = getline(lnum1) =~ '[│┌└]'
         ? 'diagram'
         : 'normal'
 
