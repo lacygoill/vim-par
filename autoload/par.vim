@@ -14,7 +14,7 @@ var split_paragraph: dict<any> = {
 
 # Interface {{{1
 def par#gq(type: any = '', arg_lnum2 = 0): string #{{{2
-    if type(type) == v:t_string && type == ''
+    if typename(type) == 'string' && type == ''
         &opfunc = 'par#gq'
         return 'g@'
     endif
