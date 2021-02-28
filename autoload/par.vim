@@ -19,7 +19,7 @@ def par#gq(type: any = '', arg_lnum2 = 0): string #{{{2
         return 'g@'
     endif
 
-    extend(split_paragraph, {mode: mode()})
+    split_paragraph.mode = mode()
     var lnum1: number
     var lnum2: number
     if arg_lnum2 == 0
