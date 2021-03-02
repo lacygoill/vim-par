@@ -86,7 +86,7 @@ def par#removeDuplicateSpaces(type = ''): string #{{{2
     return ''
 enddef
 
-def par#splitParagraph(_: any) #{{{2
+def par#splitParagraph(_a: any) #{{{2
     if getline('.') =~ '^\s*$'
         return
     endif
@@ -252,7 +252,9 @@ def Gq(arg_lnum1: number, arg_lnum2: number) #{{{2
     var line: string = getline(lnum1)
     var pat: string = '^\s*' .. GetCml() .. '\s\zs\s'
     if line =~ pat
-        substitute(line, pat, '', '')->setline(lnum1)
+        line
+            ->substitute(pat, '', '')
+            ->setline(lnum1)
         sil exe 'norm! ' .. lnum1 .. 'Ggq' .. lnum2 .. 'G'
     endif
 enddef
@@ -452,7 +454,7 @@ def GetCml(with_equal_quantifier = false): string #{{{2
     else
         var cml: string = matchstr(&l:cms, '\S*\ze\s*%s')
         return with_equal_quantifier
-            ? '\%(\V' .. escape(cml, '\') .. '\m\)\='
+            ? '\%(' .. '\V' .. escape(cml, '\') .. '\m' .. '\)\='
             : '\V' .. escape(cml, '\') .. '\m'
     endif
 enddef
